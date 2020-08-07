@@ -1,64 +1,71 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:zwm_app/Components/Home/partials/home.dart';
+import 'package:zwm_app/Components/Home/partials/virtual_world.dart';
 
-class Home extends StatefulWidget {
+class Nav extends StatefulWidget {
   @override
-  _HomeState createState() => _HomeState();
+  _NavState createState() => _NavState();
 }
 
-class _HomeState extends State<Home> {
+class _NavState extends State<Nav> {
   int _page = 0;
-  GlobalKey _bottomNavigationKey = GlobalKey();
+  GlobalKey _bottomNavKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
+    final _pages = [
+      Home(),
+      VirtualWorld(),
+    ];
+
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).accentColor,
+        automaticallyImplyLeading: false,
+        elevation: 0,
         iconTheme: IconThemeData(
-          color: Theme.of(context).primaryColor,
+          color: Theme.of(context).accentColor,
         ),
         title: Container(
           height: 40,
           width: 40,
           decoration: BoxDecoration(
-            color: Theme.of(context).primaryColor,
+            color: Theme.of(context).accentColor,
             shape: BoxShape.circle,
           ),
           child: Icon(
             MaterialCommunityIcons.leaf,
-            color: Theme.of(context).accentColor,
+            color: Theme.of(context).primaryColor,
             size: 28,
           ),
         ),
         centerTitle: true,
       ),
-      drawer: Drawer(),
       bottomNavigationBar: CurvedNavigationBar(
         backgroundColor: Colors.white,
         color: Theme.of(context).primaryColor,
         height: 60.0,
         animationDuration: Duration(milliseconds: 300),
-        key: _bottomNavigationKey,
+        key: _bottomNavKey,
         items: <Widget>[
           Icon(
-            Icons.add,
+            FontAwesome.home,
             size: 30,
             color: Theme.of(context).accentColor,
           ),
           Icon(
-            Icons.list,
+            MaterialIcons.directions_walk,
             size: 30,
             color: Theme.of(context).accentColor,
           ),
           Icon(
-            Icons.compare_arrows,
+            FontAwesome.map_marker,
             size: 30,
             color: Theme.of(context).accentColor,
           ),
           Icon(
-            Icons.compare_arrows,
+            FontAwesome.user_circle_o,
             size: 30,
             color: Theme.of(context).accentColor,
           )
@@ -66,29 +73,10 @@ class _HomeState extends State<Home> {
         onTap: (index) {
           setState(() {
             _page = index;
-            Navigator.pushNamed(context, '/register');
           });
         },
       ),
-      body: Container(
-        color: Colors.white,
-        child: Center(
-          child: Column(
-            children: <Widget>[
-              Text(_page.toString(), textScaleFactor: 10.0),
-              RaisedButton(
-                child: Text('Go To Page of index 1'),
-                onPressed: () {
-                  //Page change using state does the same as clicking index 1 navigation button
-                  final CurvedNavigationBarState navBarState =
-                      _bottomNavigationKey.currentState;
-                  navBarState.setPage(1);
-                },
-              )
-            ],
-          ),
-        ),
-      ),
+      body: _pages[_page],
     );
   }
 }

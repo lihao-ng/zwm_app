@@ -40,9 +40,9 @@ class Routes {
         );
         break;
 
-      case '/home':
+      case '/nav':
         return PageTransition(
-          child: Home(),
+          child: Nav(),
           type: PageTransitionType.fade,
           settings: settings,
         );

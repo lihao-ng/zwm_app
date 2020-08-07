@@ -81,7 +81,7 @@ class _LoginState extends State<Login> {
                           // get value and request for auth
 
                           // Navigator.pushReplacementNamed(context, '/home');
-                          Navigator.pushNamed(context, '/home');
+                          Navigator.pushNamed(context, '/nav');
                         },
                       ),
                     ),

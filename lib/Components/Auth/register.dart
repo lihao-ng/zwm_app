@@ -153,7 +153,7 @@ class _RegisterState extends State<Register> {
                     // get value, register and request for auth
 
                     // Navigator.pushReplacementNamed(context, '/home');
-                    Navigator.pushNamed(context, '/home');
+                    Navigator.pushNamed(context, '/nav');
                   },
                 ),
               ),

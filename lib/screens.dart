@@ -6,4 +6,4 @@ export 'package:zwm_app/Components/Auth/login.dart';
 export 'package:zwm_app/Components/Auth/register.dart';
 
 // Home Screens
-export 'package:zwm_app/Components/Home/home.dart';
+export 'package:zwm_app/Components/Home/nav.dart';
