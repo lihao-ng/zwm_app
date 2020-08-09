@@ -80,8 +80,8 @@ class _LoginState extends State<Login> {
                           // emailController.text
                           // get value and request for auth
 
-                          // Navigator.pushReplacementNamed(context, '/home');
-                          Navigator.pushNamed(context, '/nav');
+                          Navigator.pushReplacementNamed(context, '/nav');
+                          // Navigator.pushNamed(context, '/nav');
                         },
                       ),
                     ),
