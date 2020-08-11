@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:zwm_app/Animations/FadeAnimation.dart';
-import 'package:zwm_app/Components/Buttons/PrimaryButton.dart';
-import 'package:zwm_app/Components/Inputs/InputField.dart';
+
+import 'package:zwm_app/Components/Widgets/Buttons/PrimaryButton.dart';
+import 'package:zwm_app/Components/Widgets/Inputs/InputField.dart';
+import 'package:zwm_app/Components/Widgets/AppBar.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -30,27 +33,10 @@ class _RegisterState extends State<Register> {
 
   @override
   Widget build(BuildContext context) {
+    final _theme = Theme.of(context);
+
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).accentColor,
-        iconTheme: IconThemeData(
-          color: Theme.of(context).primaryColor,
-        ),
-        title: Container(
-          height: 40,
-          width: 40,
-          decoration: BoxDecoration(
-            color: Theme.of(context).primaryColor,
-            shape: BoxShape.circle,
-          ),
-          child: Icon(
-            MaterialCommunityIcons.leaf,
-            color: Theme.of(context).accentColor,
-            size: 28,
-          ),
-        ),
-        centerTitle: true,
-      ),
+      appBar: appBar(),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(30),
@@ -61,7 +47,7 @@ class _RegisterState extends State<Register> {
                 1,
                 RichText(
                   text: TextSpan(
-                    style: Theme.of(context).textTheme.headline1,
+                    style: _theme.textTheme.headline1,
                     children: <TextSpan>[
                       TextSpan(
                         text: 'Sign ',
@@ -81,7 +67,7 @@ class _RegisterState extends State<Register> {
                 1.3,
                 Text(
                   'Help the environment while you earn!',
-                  style: Theme.of(context).textTheme.caption,
+                  style: _theme.textTheme.caption,
                 ),
               ),
               SizedBox(height: 25),
@@ -146,14 +132,14 @@ class _RegisterState extends State<Register> {
                 2.6,
                 primaryButton(
                   text: 'Sign Up',
-                  color: Theme.of(context).primaryColor,
-                  style: Theme.of(context).textTheme.button,
+                  color: _theme.primaryColor,
+                  style: _theme.textTheme.button,
                   onClick: () {
                     // emailController.text
                     // get value, register and request for auth
 
                     // Navigator.pushReplacementNamed(context, '/home');
-                    Navigator.pushNamed(context, '/home');
+                    Navigator.pushNamed(context, '/nav');
                   },
                 ),
               ),
