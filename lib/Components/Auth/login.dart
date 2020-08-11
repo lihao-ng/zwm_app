@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+
 import 'package:zwm_app/Animations/FadeAnimation.dart';
-import 'package:zwm_app/Components/Buttons/PrimaryButton.dart';
-import 'package:zwm_app/Components/Buttons/SecondaryButton.dart';
-import 'package:zwm_app/Components/Inputs/InputField.dart';
+
+import 'package:zwm_app/Components/Widgets/Buttons/PrimaryButton.dart';
+import 'package:zwm_app/Components/Widgets/Buttons/SecondaryButton.dart';
+import 'package:zwm_app/Components/Widgets/Inputs/InputField.dart';
 
 class Login extends StatefulWidget {
   @override

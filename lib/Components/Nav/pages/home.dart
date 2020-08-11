@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
+
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:zwm_app/Animations/FadeAnimation.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:countup/countup.dart';
-import 'package:zwm_app/Components/Home/partials/home/CouponCard.dart';
+
+import 'package:zwm_app/Components/Widgets/Buttons/PrimaryButton.dart';
+import 'package:zwm_app/Components/Nav/partials/home/CouponCard.dart';
+import 'package:zwm_app/Components/Nav/partials/home/MerchantCard.dart';
 import 'package:zwm_app/Models/Coupon.dart';
+import 'package:zwm_app/Models/Merchant.dart';
+
+import 'package:flutter/foundation.dart';
 
 class Home extends StatefulWidget {
   Home({Key key}) : super(key: key);
@@ -13,9 +21,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  double _points = 75000;
-
-  String i;
   @override
   void initState() {
     super.initState();
@@ -37,49 +42,159 @@ class _HomeState extends State<Home> {
             [
               SizedBox(height: 130),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 0.03 * _size.width),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                padding: EdgeInsets.symmetric(
+                  horizontal: 0.03 * _size.width,
+                  vertical: 5,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     FadeAnimation(
-                      1.2,
+                      1,
                       RichText(
                         text: TextSpan(
-                          style: Theme.of(context).textTheme.headline1,
+                          style: Theme.of(context).textTheme.bodyText1,
                           children: <TextSpan>[
                             TextSpan(
                               text: 'Latest',
-                              style: TextStyle(fontWeight: FontWeight.w100),
+                              style: TextStyle(fontSize: 22.0),
                             ),
                             TextSpan(
                               text: ' Rewards',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 22.0),
                             ),
                           ],
                         ),
                       ),
                     ),
-                    SizedBox(height: 5),
+                    FadeAnimation(
+                      1,
+                      primaryButton(
+                        text: 'View More',
+                        color: _theme.primaryColor,
+                        style: _theme.textTheme.button,
+                        padding: 11.0,
+                        onClick: () {
+                          // emailController.text
+                          // get value and request for auth
+
+                          Navigator.pushReplacementNamed(context, '/nav');
+                          // Navigator.pushNamed(context, '/nav');
+                        },
+                      ),
+                    ),
                   ],
                 ),
               ),
-              for (var index = 0; index < coupons.length; index++)
-                SizedBox(
-                  height: 200,
-                  child: CouponCard(
-                    coupon: coupons[index],
-                    press: () => {},
-                    // press: () => Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //       builder: (context) => DetailsScreen(
-                    //         product: products[index],
-                    //       ),
-                    //     )),
+              SizedBox(height: 5),
+              FadeAnimation(
+                1,
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 0.03 * _size.width),
+                  height: 270,
+                  width: 180,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: 6,
+                    itemBuilder: (context, index) {
+                      return CouponCard(
+                        coupon: coupons[index],
+                        press: () => {},
+                        // press: () => Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //       builder: (context) => DetailsScreen(
+                        //         product: products[index],
+                        //       ),
+                        //     )),
+                      );
+                    },
                   ),
                 ),
+              ),
+              SizedBox(height: 30),
+              FadeAnimation(
+                1,
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 0.03 * _size.width,
+                    vertical: 5,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      FadeAnimation(
+                        1,
+                        RichText(
+                          text: TextSpan(
+                            style: Theme.of(context).textTheme.bodyText1,
+                            children: <TextSpan>[
+                              TextSpan(
+                                text: 'Popular',
+                                style: TextStyle(fontSize: 22.0),
+                              ),
+                              TextSpan(
+                                text: ' Shops',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 22.0,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      FadeAnimation(
+                        1,
+                        primaryButton(
+                          text: 'View More',
+                          color: _theme.primaryColor,
+                          style: _theme.textTheme.button,
+                          padding: 11.0,
+                          onClick: () {
+                            // emailController.text
+                            // get value and request for auth
+
+                            Navigator.pushReplacementNamed(context, '/nav');
+                            // Navigator.pushNamed(context, '/nav');
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: 5),
+              FadeAnimation(
+                1,
+                CarouselSlider(
+                  options: CarouselOptions(
+                    height: 400.0,
+                    autoPlay: true,
+                    autoPlayInterval: Duration(seconds: 4),
+                    autoPlayAnimationDuration: Duration(milliseconds: 1200),
+                    autoPlayCurve: Curves.easeInOutBack,
+                  ),
+                  items: merchants.map((merchant) {
+                    return Builder(builder: (BuildContext context) {
+                      return Container(
+                        height: MediaQuery.of(context).size.height * 0.30,
+                        width: MediaQuery.of(context).size.width,
+                        child: MerchantCard(
+                          merchant: merchant,
+                          press: () =>
+                              {debugPrint('merchant id: ${merchant.id}')},
+                        ),
+                      );
+                    });
+                  }).toList(),
+                ),
+              ),
+              SizedBox(height: 30),
             ],
           ),
-        )
+        ),
       ],
     );
   }
@@ -131,7 +246,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
               ),
               SizedBox(height: 10),
               FadeAnimation(
-                1.2,
+                1,
                 RichText(
                   text: TextSpan(
                     style: Theme.of(context).textTheme.headline2,
@@ -151,7 +266,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
               Countup(
                 begin: _points - 5000,
                 end: _points,
-                duration: Duration(milliseconds: 1200),
+                duration: Duration(milliseconds: 1000),
                 separator: ',',
                 style: TextStyle(
                   fontSize: 36,
@@ -196,7 +311,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
           width: 0.95 * _size.width,
           height: 160,
           child: FadeAnimation(
-            1.5,
+            1,
             Opacity(
               opacity: (1 - shrinkOffset / expandedHeight),
               child: Card(
@@ -228,7 +343,9 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                               ],
                             ),
                           ),
-                          Container(
+                          GestureDetector(
+                            onTap: () =>
+                                {Navigator.pushNamed(context, '/qr-code')},
                             child: Column(
                               children: <Widget>[
                                 Icon(

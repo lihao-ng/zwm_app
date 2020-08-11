@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
+
 import 'package:zwm_app/screens.dart';
 import 'package:page_transition/page_transition.dart';
 
 class Routes {
-  static routes() {
-    return {
-      '/': (BuildContext context) => SplashScreen(),
-      '/login': (BuildContext context) => Login(),
-      '/register': (BuildContext context) {
-        return PageTransition(
-            child: Register(), type: PageTransitionType.downToUp);
-      },
-    };
-  }
+  // static routes() {
+  //   return {
+  //     '/': (BuildContext context) => SplashScreen(),
+  //     '/login': (BuildContext context) => Login(),
+  //     '/register': (BuildContext context) {
+  //       return PageTransition(
+  //           child: Register(), type: PageTransitionType.downToUp);
+  //     },
+  //   };
+  // }
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -44,6 +45,14 @@ class Routes {
         return PageTransition(
           child: Nav(),
           type: PageTransitionType.fade,
+          settings: settings,
+        );
+        break;
+
+      case '/qr-code':
+        return PageTransition(
+          child: QrCode(),
+          type: PageTransitionType.downToUp,
           settings: settings,
         );
         break;

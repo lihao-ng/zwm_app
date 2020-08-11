@@ -18,11 +18,11 @@ class Coupon {
 List<Coupon> coupons = [
   Coupon(
       id: 1,
-      title: "Office Code",
+      title: "Office Code as dasd asdas asdasdsa",
       price: 234,
       size: 12,
       description: dummyText,
-      image: "assets/images/placeholder.jpg",
+      image: "assets/images/placeholder2.jpg",
       color: Color(0xFF3D82AE)),
   Coupon(
       id: 2,
@@ -30,7 +30,7 @@ List<Coupon> coupons = [
       price: 234,
       size: 8,
       description: dummyText,
-      image: "assets/images/placeholder.jpg",
+      image: "assets/images/placeholder2.jpg",
       color: Color(0xFFD3A984)),
   Coupon(
       id: 3,
@@ -38,7 +38,7 @@ List<Coupon> coupons = [
       price: 234,
       size: 10,
       description: dummyText,
-      image: "assets/images/placeholder.jpg",
+      image: "assets/images/placeholder2.jpg",
       color: Color(0xFF989493)),
   Coupon(
       id: 4,
@@ -46,7 +46,7 @@ List<Coupon> coupons = [
       price: 234,
       size: 11,
       description: dummyText,
-      image: "assets/images/placeholder.jpg",
+      image: "assets/images/placeholder2.jpg",
       color: Color(0xFFE6B398)),
   Coupon(
       id: 5,
@@ -54,7 +54,7 @@ List<Coupon> coupons = [
       price: 234,
       size: 12,
       description: dummyText,
-      image: "assets/images/placeholder.jpg",
+      image: "assets/images/placeholder2.jpg",
       color: Color(0xFFFB7883)),
   Coupon(
     id: 6,
@@ -62,7 +62,7 @@ List<Coupon> coupons = [
     price: 234,
     size: 12,
     description: dummyText,
-    image: "assets/images/placeholder.jpg",
+    image: "assets/images/placeholder2.jpg",
     color: Color(0xFFAEAEAE),
   ),
 ];

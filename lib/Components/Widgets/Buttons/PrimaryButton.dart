@@ -5,6 +5,7 @@ GestureDetector primaryButton({
   String text,
   TextStyle style,
   Color color,
+  double padding = 20,
 }) {
   return GestureDetector(
     onTap: () {
@@ -15,7 +16,7 @@ GestureDetector primaryButton({
         color: color,
         borderRadius: BorderRadius.circular(50),
       ),
-      padding: EdgeInsets.all(20),
+      padding: EdgeInsets.all(padding),
       child: Center(
         child: Text(
           text,

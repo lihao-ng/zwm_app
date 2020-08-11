@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:zwm_app/Components/Home/pages/home.dart';
-import 'package:zwm_app/Components/Home/pages/virtual_world.dart';
+
+import 'package:zwm_app/Components/Nav/pages/home.dart';
+import 'package:zwm_app/Components/Nav/pages/virtual_world.dart';
 
 class Nav extends StatefulWidget {
   @override
@@ -22,27 +24,6 @@ class _NavState extends State<Nav> {
 
     return SafeArea(
       child: Scaffold(
-        // appBar: AppBar(
-        //   automaticallyImplyLeading: false,
-        //   elevation: 0,
-        //   iconTheme: IconThemeData(
-        //     color: Theme.of(context).accentColor,
-        //   ),
-        //   title: Container(
-        //     height: 40,
-        //     width: 40,
-        //     decoration: BoxDecoration(
-        //       color: Theme.of(context).accentColor,
-        //       shape: BoxShape.circle,
-        //     ),
-        //     child: Icon(
-        //       MaterialCommunityIcons.leaf,
-        //       color: Theme.of(context).primaryColor,
-        //       size: 28,
-        //     ),
-        //   ),
-        //   centerTitle: true,
-        // ),
         bottomNavigationBar: CurvedNavigationBar(
           backgroundColor: Colors.white,
           color: Theme.of(context).primaryColor,
