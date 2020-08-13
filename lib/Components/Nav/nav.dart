@@ -4,6 +4,7 @@ import 'package:flutter_icons/flutter_icons.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 
 import 'package:zwm_app/Components/Nav/pages/home.dart';
+import 'package:zwm_app/Components/Nav/pages/location_map.dart';
 import 'package:zwm_app/Components/Nav/pages/virtual_world.dart';
 
 class Nav extends StatefulWidget {
@@ -12,16 +13,22 @@ class Nav extends StatefulWidget {
 }
 
 class _NavState extends State<Nav> {
-  int _page = 0;
   GlobalKey _bottomNavKey = GlobalKey();
+  int _page = 0;
+
+  final _pages = [
+    Home(),
+    VirtualWorld(),
+    LocationMap(),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final _pages = [
-      Home(),
-      VirtualWorld(),
-    ];
-
     return SafeArea(
       child: Scaffold(
         bottomNavigationBar: CurvedNavigationBar(
