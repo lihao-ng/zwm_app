@@ -44,7 +44,7 @@ class _NavState extends State<Nav> {
               color: Theme.of(context).accentColor,
             ),
             Icon(
-              MaterialIcons.directions_walk,
+              MaterialCommunityIcons.trophy,
               size: 30,
               color: Theme.of(context).accentColor,
             ),
