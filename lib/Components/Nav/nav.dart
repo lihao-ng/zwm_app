@@ -31,8 +31,9 @@ class _NavState extends State<Nav> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        // extendBody: true,
         bottomNavigationBar: CurvedNavigationBar(
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.transparent,
           color: Theme.of(context).primaryColor,
           height: 60.0,
           animationDuration: Duration(milliseconds: 300),
