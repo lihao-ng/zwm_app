@@ -26,6 +26,24 @@ class _InputFieldState extends State<InputField> {
 
   @override
   Widget build(BuildContext context) {
+    return TextField(
+      obscureText: widget.obscureText,
+      decoration: InputDecoration(
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: captionColor, width: 1.0),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: primaryColor, width: 1.0),
+        ),
+        prefixIcon: widget.prefixIcon,
+        contentPadding: EdgeInsets.symmetric(vertical: paddingLarge),
+        border: InputBorder.none,
+        // hintText: widget.hintText,
+        labelText: widget.hintText,
+      ),
+      controller: widget.controller,
+    );
+
     return Container(
       decoration: BoxDecoration(
         border: Border.all(

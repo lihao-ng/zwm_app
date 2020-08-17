@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:zwm_app/Components/Nav/partials/location_map/SideButtons.dart';
+import 'package:zwm_app/Components/Nav/partials/location_map/FilterDialog.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 import 'package:zwm_app/Services/Permissions/LocationsService.dart';
 import 'package:zwm_app/Components/Nav/partials/location_map/SearchInput.dart';
@@ -23,9 +24,11 @@ class LocationMap extends StatefulWidget {
 class _LocationMapState extends State<LocationMap> {
   MapType _currentMapType = MapType.normal;
   Set<Marker> _markers = {};
-  final searchController = TextEditingController();
+  var searchController = TextEditingController();
   final duplicateItems = List<String>.generate(10000, (i) => "Item $i");
   var items = List<String>();
+  double _width = 160;
+  bool _showSearchBar = false;
 
   void _getMerchants() async {
     BitmapDescriptor marker;
@@ -89,12 +92,20 @@ class _LocationMapState extends State<LocationMap> {
         .asUint8List();
   }
 
-  void _onMapTypeButtonPressed() {
+  void _onSearchTap(width) {
     setState(() {
-      _currentMapType = _currentMapType == MapType.normal
-          ? MapType.satellite
-          : MapType.normal;
+      _width = width;
     });
+
+    _showSearchBar = true;
+  }
+
+  void _onSearchHide() {
+    setState(() {
+      _width = 160;
+    });
+
+    _showSearchBar = false;
   }
 
   void _filterSearchResults(String query) {
@@ -139,7 +150,6 @@ class _LocationMapState extends State<LocationMap> {
     final _size = MediaQuery.of(context).size;
 
     return Scaffold(
-      // appBar: appBar(hasSideIcon: false),
       body: Stack(
         children: <Widget>[
           GoogleMap(
@@ -156,81 +166,162 @@ class _LocationMapState extends State<LocationMap> {
             markers: _markers,
           ),
           Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  GestureDetector(
-                    onTap: () => {
-                      // show dialog box
-                    },
-                    child: SideButtons(icon: FontAwesome.filter),
-                  ),
-                  SearchInput(
-                      controller: searchController,
-                      filter: _filterSearchResults),
-                  GestureDetector(
-                    onTap: () => LocationsService().locationPermission(),
-                    child: SideButtons(icon: MaterialIcons.my_location),
-                  ),
-                ],
-              ),
-              if (searchController.text.toString() != '')
-                Visibility(
-                  visible: searchController.text.toString() != '',
-                  child: Expanded(
-                    child: ListView.builder(
-                      physics: BouncingScrollPhysics(),
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      itemCount: items.length,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          margin: EdgeInsets.symmetric(
-                            horizontal: paddingMid,
-                          ),
-                          // color:
-                          // (index % 2 == 0) ? accentColor : Colors.grey[100],
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(3),
-                            color: (index % 2 == 0)
-                                ? accentColor
-                                : Colors.grey[100],
-                          ),
-                          child: ListTile(
-                            leading: CircleAvatar(
-                              backgroundImage: AssetImage(
-                                  'assets/images/placeholder_shop.jpg'),
+              AnimatedContainer(
+                margin: EdgeInsets.all(paddingSmall),
+                height: 60,
+                width: _width,
+                duration: Duration(seconds: 1),
+                curve: Curves.fastOutSlowIn,
+                child: Card(
+                  elevation: 3,
+                  child: Padding(
+                    padding: const EdgeInsets.all(paddingMid),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        GestureDetector(
+                          onTap: () => {
+                            _onSearchHide(),
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return FilterDialog();
+                              },
                             ),
-                            title: Text('${items[index]}',
-                                style: _theme.textTheme.bodyText1,
-                                overflow: TextOverflow.ellipsis),
-                            subtitle: Text(
-                              'Location here akjshdkjash aksjdha',
-                              style: _theme.textTheme.caption,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            trailing: Icon(Icons.keyboard_arrow_right),
+                          },
+                          child: Row(
+                            children: <Widget>[
+                              Icon(
+                                MaterialCommunityIcons.filter_variant,
+                                size: 30.0,
+                                color: primaryColor,
+                              ),
+                              SizedBox(width: spacingMin),
+                              Text(
+                                'Filters',
+                                style: _theme.textTheme.bodyText1.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
                           ),
-                        );
-                      },
-                      // separatorBuilder: (BuildContext context, int index) {
-                      //   return SizedBox(
-                      //     height: 5,
-                      //   );
-                      // },
+                        ),
+                        VerticalDivider(
+                          width: 20,
+                          thickness: 1,
+                          color: captionColor,
+                        ),
+                        GestureDetector(
+                          onTap: () => _onSearchTap(_size.width),
+                          child: Icon(
+                            Ionicons.ios_search,
+                            size: 30.0,
+                            color: primaryColor,
+                          ),
+                        ),
+                        Visibility(
+                          visible: _showSearchBar,
+                          child: SearchInput(
+                            controller: searchController,
+                            filter: _filterSearchResults,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
+              ),
+              Visibility(
+                visible:
+                    searchController.text.toString() != '' && _showSearchBar,
+                child: Expanded(
+                  child: ListView.builder(
+                    physics: BouncingScrollPhysics(),
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemCount: items.length,
+                    itemBuilder: (context, index) {
+                      return Container(
+                        margin: EdgeInsets.symmetric(
+                          horizontal: paddingMid,
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(3),
+                          color:
+                              (index % 2 == 0) ? accentColor : Colors.grey[100],
+                        ),
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundImage: AssetImage(
+                                'assets/images/placeholder_shop.jpg'),
+                          ),
+                          title: Text('${items[index]}',
+                              style: _theme.textTheme.bodyText1,
+                              overflow: TextOverflow.ellipsis),
+                          subtitle: Text(
+                            'Location here akjshdkjash aksjdha',
+                            style: _theme.textTheme.caption,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          trailing: Icon(Icons.keyboard_arrow_right),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
               SizedBox(height: 20),
             ],
           )
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _onMapTypeButtonPressed(),
-        label: Icon(Icons.map),
+      floatingActionButton: SpeedDial(
+        animatedIcon: AnimatedIcons.menu_close,
+        animatedIconTheme: IconThemeData(size: 22.0),
+        backgroundColor: primaryColor,
+        foregroundColor: accentColor,
+        closeManually: false,
+        curve: Curves.easeIn,
+        overlayColor: captionColor,
+        overlayOpacity: 0.5,
+        onOpen: () => _onSearchHide(),
+        children: [
+          SpeedDialChild(
+            child: Icon(
+              MaterialIcons.store,
+              color: accentColor,
+            ),
+            backgroundColor: Colors.orange[200],
+            label: 'Search by Category',
+            labelStyle: _theme.textTheme.bodyText1
+                .copyWith(fontWeight: FontWeight.bold),
+            onTap: () => Navigator.pushNamed(context, '/categories'),
+          ),
+          SpeedDialChild(
+            child: Icon(
+              MaterialCommunityIcons.spray_bottle,
+              color: accentColor,
+            ),
+            backgroundColor: Colors.lightBlue[200],
+            label: 'Search by Product',
+            labelStyle: _theme.textTheme.bodyText1
+                .copyWith(fontWeight: FontWeight.bold),
+            onTap: () => print('SECOND CHILD'),
+          ),
+          SpeedDialChild(
+            child: Icon(
+              MaterialIcons.my_location,
+              color: accentColor,
+            ),
+            backgroundColor: Colors.redAccent[100],
+            label: 'Search Nearby',
+            labelStyle: _theme.textTheme.bodyText1
+                .copyWith(fontWeight: FontWeight.bold),
+            onTap: () => {LocationsService().locationPermission()},
+          ),
+        ],
       ),
     );
   }
