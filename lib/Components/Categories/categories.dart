@@ -23,10 +23,14 @@ class _CategoriesState extends State<Categories> {
           vertical: paddingMid,
         ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             FadeAnimation(
               1,
-              Text('Categories', style: _theme.textTheme.headline1),
+              Text(
+                'Categories',
+                style: _theme.textTheme.headline1,
+              ),
             ),
             SizedBox(height: spacingSmall),
             Expanded(
@@ -36,7 +40,8 @@ class _CategoriesState extends State<Categories> {
                     SizedBox(height: spacingSmall),
                 itemBuilder: (BuildContext context, int index) {
                   return GestureDetector(
-                    onTap: () => {},
+                    onTap: () => Navigator.pushNamed(context, '/merchants-list',
+                        arguments: categories[index].title),
                     child: Container(
                       width: _size.width,
                       height: 80,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:zwm_app/Components/Categories/categories.dart';
+import 'package:zwm_app/Components/Merchants/merchants_list.dart';
 
 import 'package:zwm_app/screens.dart';
 import 'package:page_transition/page_transition.dart';
@@ -50,7 +51,17 @@ class Routes {
       case '/categories':
         return PageTransition(
           child: Categories(),
-          type: PageTransitionType.downToUp,
+          type: PageTransitionType.fade,
+          settings: settings,
+        );
+        break;
+
+      case '/merchants-list':
+        var category = settings.arguments;
+
+        return PageTransition(
+          child: MerchantsList(category: category),
+          type: PageTransitionType.fade,
           settings: settings,
         );
         break;

@@ -21,7 +21,8 @@ List<Merchant> merchants = [
     id: 1,
     name: "Nude Zero Waste Store",
     contact: '012-2321232',
-    address: 'No 12, SS 22/3, Taman Megah',
+    address:
+        'No 12, SS 22/3, Taman Megah asdjlskj asldkj aldkajs laksdjals kjdaskja',
     category: 'Bulk Store',
     description: dummyText,
     image: "assets/images/placeholder_shop.jpg",
