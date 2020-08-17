@@ -344,8 +344,9 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                             ),
                           ),
                           GestureDetector(
-                            onTap: () =>
-                                {Navigator.pushNamed(context, '/qr-code')},
+                            onTap: () => {
+                              Navigator.pushNamed(context, '/qr-code'),
+                            },
                             child: Column(
                               children: <Widget>[
                                 Icon(

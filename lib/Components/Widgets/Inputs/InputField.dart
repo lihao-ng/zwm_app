@@ -1,17 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:zwm_app/constants.dart';
 
-/// *  textInputType - The type of information for which to optimize the text input control.
-/// *  hintText - Text that suggests what sort of input the field accepts.
-/// *  prefixIcon - Pass Icon if required
-/// *  defaultText - If there is predefined value is there for a text field
-/// *  focusNode - Currently focus node
-/// *  obscureText - Is Password field?
-/// *  controller - Text controller
-/// *  functionValidate - Validation function(currently I have used to check empty field)
-/// *  parametersValidate - Value to validate
-/// *  actionKeyboard - Keyboard action eg. next, done, search, etc
-/// *  onSubmitField - Done click action
-/// *  onFieldTap - On focus on TextField
 class InputField extends StatefulWidget {
   final String hintText;
   final Widget prefixIcon;
@@ -37,6 +26,24 @@ class _InputFieldState extends State<InputField> {
 
   @override
   Widget build(BuildContext context) {
+    return TextField(
+      obscureText: widget.obscureText,
+      decoration: InputDecoration(
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: captionColor, width: 1.0),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: primaryColor, width: 1.0),
+        ),
+        prefixIcon: widget.prefixIcon,
+        contentPadding: EdgeInsets.symmetric(vertical: paddingLarge),
+        border: InputBorder.none,
+        // hintText: widget.hintText,
+        labelText: widget.hintText,
+      ),
+      controller: widget.controller,
+    );
+
     return Container(
       decoration: BoxDecoration(
         border: Border.all(
@@ -53,9 +60,8 @@ class _InputFieldState extends State<InputField> {
                 obscureText: widget.obscureText,
                 decoration: InputDecoration(
                     prefixIcon: widget.prefixIcon,
-                    contentPadding: EdgeInsets.symmetric(
-                      vertical: 15,
-                    ),
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: paddingLarge),
                     border: InputBorder.none,
                     hintText: widget.hintText),
                 controller: widget.controller,

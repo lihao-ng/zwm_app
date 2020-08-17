@@ -1,20 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:zwm_app/Components/Categories/categories.dart';
 
 import 'package:zwm_app/screens.dart';
 import 'package:page_transition/page_transition.dart';
 
 class Routes {
-  // static routes() {
-  //   return {
-  //     '/': (BuildContext context) => SplashScreen(),
-  //     '/login': (BuildContext context) => Login(),
-  //     '/register': (BuildContext context) {
-  //       return PageTransition(
-  //           child: Register(), type: PageTransitionType.downToUp);
-  //     },
-  //   };
-  // }
-
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case '/':
@@ -52,6 +42,14 @@ class Routes {
       case '/qr-code':
         return PageTransition(
           child: QrCode(),
+          type: PageTransitionType.downToUp,
+          settings: settings,
+        );
+        break;
+
+      case '/categories':
+        return PageTransition(
+          child: Categories(),
           type: PageTransitionType.downToUp,
           settings: settings,
         );
