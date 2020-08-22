@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:zwm_app/Components/Categories/categories.dart';
-import 'package:zwm_app/Components/Merchants/merchants_list.dart';
+
+import 'package:page_transition/page_transition.dart';
 
 import 'package:zwm_app/screens.dart';
-import 'package:page_transition/page_transition.dart';
 
 class Routes {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -43,7 +42,7 @@ class Routes {
       case '/qr-code':
         return PageTransition(
           child: QrCode(),
-          type: PageTransitionType.downToUp,
+          type: PageTransitionType.fade,
           settings: settings,
         );
         break;
@@ -61,6 +60,34 @@ class Routes {
 
         return PageTransition(
           child: MerchantsList(category: category),
+          type: PageTransitionType.fade,
+          settings: settings,
+        );
+        break;
+
+      case '/merchant-detail':
+        var merchant = settings.arguments;
+
+        return PageTransition(
+          child: MerchantDetail(merchant: merchant),
+          type: PageTransitionType.fade,
+          settings: settings,
+        );
+        break;
+
+      case '/coupons-list':
+        return PageTransition(
+          child: CouponsList(),
+          type: PageTransitionType.fade,
+          settings: settings,
+        );
+        break;
+
+      case '/coupon-detail':
+        var coupon = settings.arguments;
+
+        return PageTransition(
+          child: CouponDetail(coupon: coupon),
           type: PageTransitionType.fade,
           settings: settings,
         );

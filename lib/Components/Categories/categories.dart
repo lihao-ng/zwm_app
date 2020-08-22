@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:zwm_app/Animations/FadeAnimation.dart';
+
 import 'package:zwm_app/Components/Widgets/AppBar.dart';
 import 'package:zwm_app/Models/Category.dart';
 import 'package:zwm_app/constants.dart';
@@ -13,7 +14,7 @@ class _CategoriesState extends State<Categories> {
   @override
   Widget build(BuildContext context) {
     final _theme = Theme.of(context);
-    final _size = MediaQuery.of(context).size;
+    final Orientation orientation = MediaQuery.of(context).orientation;
 
     return Scaffold(
       appBar: appBar(),
@@ -34,40 +35,39 @@ class _CategoriesState extends State<Categories> {
             ),
             SizedBox(height: spacingSmall),
             Expanded(
-              child: ListView.separated(
-                itemCount: categories.length,
-                separatorBuilder: (BuildContext context, int index) =>
-                    SizedBox(height: spacingSmall),
-                itemBuilder: (BuildContext context, int index) {
+              child: GridView.count(
+                crossAxisCount: (orientation == Orientation.portrait) ? 2 : 3,
+                mainAxisSpacing: spacingMin,
+                crossAxisSpacing: spacingMin,
+                padding: EdgeInsets.all(paddingSmall),
+                childAspectRatio:
+                    (orientation == Orientation.portrait) ? 1.0 : 1.3,
+                children: categories.map<Widget>((Category category) {
                   return GestureDetector(
-                    onTap: () => Navigator.pushNamed(context, '/merchants-list',
-                        arguments: categories[index].title),
-                    child: Container(
-                      width: _size.width,
-                      height: 80,
-                      child: Stack(
-                        children: <Widget>[
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: Image.asset(
-                              categories[index].image,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          Center(
-                            child: Text(
-                              categories[index].title,
-                              style: _theme.textTheme.headline3
-                                  .copyWith(color: accentColor),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ],
+                    onTap: () {
+                      Navigator.pushNamed(context, '/merchants-list',
+                          arguments: category.title);
+                    },
+                    child: GridTile(
+                      footer: GridTileBar(
+                        title: Text(
+                          category.title,
+                          style: _theme.textTheme.bodyText2,
+                          maxLines: 2,
+                        ),
+                        backgroundColor: Colors.black45,
+                        leading: Icon(
+                          Icons.ac_unit,
+                          color: Colors.white,
+                        ),
+                      ),
+                      child: Image.asset(
+                        category.image,
+                        fit: BoxFit.cover,
                       ),
                     ),
                   );
-                },
+                }).toList(),
               ),
             ),
           ],

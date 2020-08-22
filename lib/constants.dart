@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 const largeTextSize = 30.0;
-const mediumTextSize = 22.0;
+const mediumTextSize = 20.0;
 const bodyTextSize = 14.0;
 
 const logoSize = 28.0;

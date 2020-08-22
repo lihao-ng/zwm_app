@@ -1,21 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:zwm_app/Animations/FadeAnimation.dart';
-import 'package:zwm_app/Components/Merchants/partials/MerchantCard.dart';
+import 'package:zwm_app/Components/Coupons/partials/CouponCard.dart';
 import 'package:zwm_app/Components/Widgets/AppBar.dart';
-import 'package:zwm_app/Models/Merchant.dart';
+import 'package:zwm_app/Models/Coupon.dart';
 import 'package:zwm_app/constants.dart';
 
-class MerchantsList extends StatefulWidget {
-  final String category;
-
-  const MerchantsList({@required this.category});
-
+class CouponsList extends StatefulWidget {
   @override
-  _MerchantsListState createState() => _MerchantsListState();
+  _CouponsListState createState() => _CouponsListState();
 }
 
-class _MerchantsListState extends State<MerchantsList> {
-  // final _pairList = <Merchant>[];
+class _CouponsListState extends State<CouponsList> {
+  // final _pairList = <Coupon>[];
 
   // bool _isLoading = true;
   // bool _hasMore = true;
@@ -65,7 +61,7 @@ class _MerchantsListState extends State<MerchantsList> {
             FadeAnimation(
               1,
               Text(
-                widget.category,
+                'Rewards',
                 style: _theme.textTheme.headline1,
               ),
             ),
@@ -78,11 +74,11 @@ class _MerchantsListState extends State<MerchantsList> {
                   thickness: 2,
                 ),
                 itemBuilder: (context, index) {
-                  return MerchantCard(
-                    merchant: merchants[index],
+                  return CouponCard(
+                    coupon: coupons[index],
                     press: () => {
-                      Navigator.pushNamed(context, '/merchant-detail',
-                          arguments: merchants[index]),
+                      Navigator.pushNamed(context, '/coupon-detail',
+                          arguments: coupons[index]),
                     },
                   );
                 },
