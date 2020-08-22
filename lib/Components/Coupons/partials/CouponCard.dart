@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:zwm_app/Models/Merchant.dart';
+import 'package:zwm_app/Models/Coupon.dart';
 import 'package:zwm_app/constants.dart';
 
-class MerchantCard extends StatelessWidget {
-  final Merchant merchant;
+class CouponCard extends StatelessWidget {
+  final Coupon coupon;
   final Function press;
 
-  const MerchantCard({
+  const CouponCard({
     Key key,
-    this.merchant,
+    this.coupon,
     this.press,
   }) : super(key: key);
 
@@ -26,54 +26,55 @@ class MerchantCard extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
+            ClipRRect(
+              borderRadius: BorderRadius.circular(5),
+              child: Image.asset(
+                coupon.image,
+                fit: BoxFit.fill,
+                width: 140,
+              ),
+            ),
             Expanded(
               child: Padding(
-                padding: EdgeInsets.only(right: paddingLarge),
+                padding: EdgeInsets.only(left: paddingLarge),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      merchant.name,
+                      coupon.title,
                       style: _theme.textTheme.bodyText1.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: tertiaryColor,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(
-                      merchant.category,
-                      style: _theme.textTheme.caption,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    SizedBox(height: spacingMin),
-                    Text(
-                      merchant.address,
-                      style: _theme.textTheme.caption.copyWith(
-                        color: tertiaryColor,
-                      ),
+                          fontWeight: FontWeight.bold, color: tertiaryColor),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    SizedBox(height: spacingSmall),
                     Text(
-                      merchant.contact,
-                      style: _theme.textTheme.bodyText1.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                      'Nude Zero Waste Store',
+                      style: _theme.textTheme.caption,
+                      maxLines: 2,
                       overflow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(height: spacingLarge),
+                    RichText(
+                      overflow: TextOverflow.ellipsis,
+                      text: TextSpan(
+                        style: DefaultTextStyle.of(context).style,
+                        children: <TextSpan>[
+                          TextSpan(
+                            text: coupon.price.toString(),
+                            style: _theme.textTheme.bodyText1.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          TextSpan(
+                            text: " points",
+                            style: _theme.textTheme.caption,
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
-              ),
-            ),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(5),
-              child: Image.asset(
-                merchant.image,
-                fit: BoxFit.fill,
-                width: 100,
-                height: 100,
               ),
             ),
           ],

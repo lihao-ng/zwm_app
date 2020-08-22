@@ -76,11 +76,7 @@ class _HomeState extends State<Home> {
                         style: _theme.textTheme.button,
                         padding: 11.0,
                         onClick: () {
-                          // emailController.text
-                          // get value and request for auth
-
-                          Navigator.pushReplacementNamed(context, '/nav');
-                          // Navigator.pushNamed(context, '/nav');
+                          Navigator.pushNamed(context, '/coupons-list');
                         },
                       ),
                     ),
@@ -156,7 +152,7 @@ class _HomeState extends State<Home> {
                             // emailController.text
                             // get value and request for auth
 
-                            Navigator.pushReplacementNamed(context, '/nav');
+                            Navigator.pushNamed(context, '/categories');
                             // Navigator.pushNamed(context, '/nav');
                           },
                         ),
@@ -324,7 +320,10 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: <Widget>[
-                          Container(
+                          GestureDetector(
+                            onTap: () => {
+                              Navigator.pushNamed(context, '/categories'),
+                            },
                             child: Column(
                               children: <Widget>[
                                 Icon(
