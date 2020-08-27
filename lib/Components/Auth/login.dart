@@ -5,6 +5,9 @@ import 'package:zwm_app/Animations/FadeAnimation.dart';
 import 'package:zwm_app/Components/Widgets/Buttons/PrimaryButton.dart';
 import 'package:zwm_app/Components/Widgets/Buttons/SecondaryButton.dart';
 import 'package:zwm_app/Components/Widgets/Inputs/InputField.dart';
+import 'package:zwm_app/Models/Auth.dart';
+import 'package:zwm_app/Services/Permissions/AuthServices.dart';
+import 'package:zwm_app/utils.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -14,6 +17,8 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  final Map<String, String> _formData = {};
 
   @override
   void dispose() {
@@ -25,83 +30,118 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
+    void onSubmit() {
+      if (!_formKey.currentState.validate()) {
+        return;
+      }
+
+      _formKey.currentState.save();
+
+      processingDialog(context);
+
+      AuthServices().login(
+        email: _formData["email"],
+        password: _formData["password"],
+        onSuccess: () {
+          Navigator.of(context).pushNamedAndRemoveUntil(
+            '/nav',
+            (Route<dynamic> route) => false,
+          );
+        },
+        onError: (response) {
+          Navigator.of(context).pop();
+          errorAlert(
+            context,
+            title: "An error has occured!",
+            body: response,
+          );
+        },
+      );
+    }
+
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              FadeAnimation(
-                1,
-                Container(
-                  height: 0.35 * size.height,
-                  width: double.infinity,
-                  child: Image.asset(
-                    'assets/images/background4.jpg',
-                    fit: BoxFit.cover,
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: <Widget>[
+                FadeAnimation(
+                  1,
+                  Container(
+                    height: 0.35 * size.height,
+                    width: double.infinity,
+                    child: Image.asset(
+                      'assets/images/background4.jpg',
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                child: Column(
-                  children: <Widget>[
-                    FadeAnimation(
-                      1.5,
-                      Text(
-                        'Login',
-                        style: Theme.of(context).textTheme.headline1,
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                  child: Column(
+                    children: <Widget>[
+                      FadeAnimation(
+                        1.5,
+                        Text(
+                          'Login',
+                          style: Theme.of(context).textTheme.headline1,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 20),
-                    FadeAnimation(
-                      1.7,
-                      InputField(
-                        hintText: "Your email",
-                        controller: emailController,
-                        prefixIcon: Icon(Icons.mail),
+                      SizedBox(height: 20),
+                      FadeAnimation(
+                        1.7,
+                        InputField(
+                          hintText: "Your email",
+                          // controller: emailController,
+                          prefixIcon: Icon(Icons.mail),
+                          saved: (String value) {
+                            _formData['email'] = value;
+                          },
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 20),
-                    FadeAnimation(
-                      1.7,
-                      InputField(
-                        hintText: "Your password",
-                        obscureText: true,
-                        controller: passwordController,
-                        prefixIcon: Icon(Icons.lock),
+                      SizedBox(height: 20),
+                      FadeAnimation(
+                        1.7,
+                        InputField(
+                          hintText: "Your password",
+                          obscureText: true,
+                          // controller: passwordController,
+                          prefixIcon: Icon(Icons.lock),
+                          saved: (String value) {
+                            _formData['password'] = value;
+                          },
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 40),
-                    FadeAnimation(
-                      1.7,
-                      primaryButton(
-                        text: 'Login',
-                        color: Theme.of(context).primaryColor,
-                        style: Theme.of(context).textTheme.button,
-                        onClick: () {
-                          // emailController.text
-                          // get value and request for auth
-
-                          Navigator.pushReplacementNamed(context, '/nav');
-                          // Navigator.pushNamed(context, '/nav');
-                        },
+                      SizedBox(height: 40),
+                      FadeAnimation(
+                        1.7,
+                        primaryButton(
+                          text: 'Login',
+                          color: Theme.of(context).primaryColor,
+                          style: Theme.of(context).textTheme.button,
+                          onClick: () {
+                            onSubmit();
+                          },
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 15),
-                    FadeAnimation(
-                      2,
-                      secondaryButton(
-                        text: 'Create Account',
-                        color: Theme.of(context).primaryColor,
-                        onClick: () {
-                          Navigator.pushNamed(context, '/register');
-                        },
+                      SizedBox(height: 15),
+                      FadeAnimation(
+                        2,
+                        secondaryButton(
+                          text: 'Create Account',
+                          color: Theme.of(context).primaryColor,
+                          onClick: () {
+                            Navigator.pushNamed(context, '/register');
+                          },
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              )
-            ],
+                    ],
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),

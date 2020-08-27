@@ -1,16 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:zwm_app/constants.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:zwm_app/styles.dart';
 import 'package:zwm_app/routes.dart';
 
 Future main() async {
+  await DotEnv().load('assets/.env');
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations(
+      [
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+      ],
+    );
+
     return MaterialApp(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,

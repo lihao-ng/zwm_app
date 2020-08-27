@@ -7,6 +7,7 @@ class InputField extends StatefulWidget {
   final String defaultText;
   final bool obscureText;
   final TextEditingController controller;
+  final Function saved;
 
   const InputField({
     @required this.hintText,
@@ -14,7 +15,7 @@ class InputField extends StatefulWidget {
     this.obscureText = false,
     this.controller,
     this.prefixIcon,
-    borderColor,
+    this.saved,
   });
 
   @override
@@ -26,7 +27,7 @@ class _InputFieldState extends State<InputField> {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
       obscureText: widget.obscureText,
       decoration: InputDecoration(
         enabledBorder: OutlineInputBorder(
@@ -41,40 +42,10 @@ class _InputFieldState extends State<InputField> {
         // hintText: widget.hintText,
         labelText: widget.hintText,
       ),
-      controller: widget.controller,
-    );
-
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: isFocused ? Theme.of(context).primaryColor : Colors.grey,
-          width: 2,
-        ),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            child: Focus(
-              child: TextField(
-                obscureText: widget.obscureText,
-                decoration: InputDecoration(
-                    prefixIcon: widget.prefixIcon,
-                    contentPadding:
-                        EdgeInsets.symmetric(vertical: paddingLarge),
-                    border: InputBorder.none,
-                    hintText: widget.hintText),
-                controller: widget.controller,
-              ),
-              onFocusChange: (hasFocus) {
-                setState(() {
-                  isFocused = hasFocus;
-                });
-              },
-            ),
-          )
-        ],
-      ),
+      onSaved: (value) {
+        widget.saved(value);
+      },
+      // controller: widget.controller,
     );
   }
 }

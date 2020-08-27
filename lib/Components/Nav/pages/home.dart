@@ -8,6 +8,7 @@ import 'package:countup/countup.dart';
 import 'package:zwm_app/Components/Widgets/Buttons/PrimaryButton.dart';
 import 'package:zwm_app/Components/Nav/partials/home/CouponCard.dart';
 import 'package:zwm_app/Components/Nav/partials/home/MerchantCard.dart';
+import 'package:zwm_app/Models/Auth.dart';
 import 'package:zwm_app/Models/Coupon.dart';
 import 'package:zwm_app/Models/Merchant.dart';
 
@@ -34,13 +35,12 @@ class _HomeState extends State<Home> {
     return CustomScrollView(
       slivers: [
         SliverPersistentHeader(
-          delegate: MySliverAppBar(expandedHeight: 200),
+          delegate: MySliverAppBar(expandedHeight: 320),
           pinned: true,
         ),
         SliverList(
           delegate: SliverChildListDelegate(
             [
-              SizedBox(height: 130),
               Padding(
                 padding: EdgeInsets.symmetric(
                   horizontal: 0.03 * _size.width,
@@ -198,7 +198,7 @@ class _HomeState extends State<Home> {
 
 class MySliverAppBar extends SliverPersistentHeaderDelegate {
   final double expandedHeight;
-  var _points = 75000.00;
+  var _points = 75000;
 
   MySliverAppBar({@required this.expandedHeight});
 
@@ -209,11 +209,9 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
     final _size = MediaQuery.of(context).size;
 
     return Stack(
-      fit: StackFit.expand,
       overflow: Overflow.visible,
       children: [
         Container(
-          height: 0.35 * _size.height,
           width: double.infinity,
           color: _theme.primaryColor,
           child: Image.asset(
@@ -259,15 +257,24 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                 ),
               ),
               SizedBox(height: 5),
-              Countup(
-                begin: _points - 5000,
-                end: _points,
-                duration: Duration(milliseconds: 1000),
-                separator: ',',
-                style: TextStyle(
-                  fontSize: 36,
+              FadeAnimation(
+                1,
+                Text(
+                  _points.toString(),
+                  style: TextStyle(
+                    fontSize: 36,
+                  ),
                 ),
               ),
+              // Countup(
+              //   begin: _points - 5000,
+              //   end: _points,
+              //   duration: Duration(milliseconds: 1000),
+              //   separator: ',',
+              // style: TextStyle(
+              //   fontSize: 36,
+              // ),
+              // ),
             ],
           ),
         ),
@@ -302,7 +309,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
           ),
         ),
         Positioned(
-          top: expandedHeight / 1.3 - shrinkOffset,
+          top: expandedHeight / 2.3 - shrinkOffset,
           left: _size.width / 40,
           width: 0.95 * _size.width,
           height: 160,
@@ -403,7 +410,15 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                               ],
                             ),
                           ),
-                          Container(
+                          GestureDetector(
+                            onTap: () => {
+                              Auth.erase(done: () {
+                                Navigator.of(context).pushNamedAndRemoveUntil(
+                                  '/login',
+                                  (Route<dynamic> route) => false,
+                                );
+                              })
+                            },
                             child: Column(
                               children: <Widget>[
                                 Icon(
