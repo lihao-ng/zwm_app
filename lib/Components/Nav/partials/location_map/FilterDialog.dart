@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
 import 'package:zwm_app/constants.dart';
 
 class FilterDialog extends StatefulWidget {
