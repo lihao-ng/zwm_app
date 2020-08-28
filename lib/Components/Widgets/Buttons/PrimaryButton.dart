@@ -1,27 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:zwm_app/constants.dart';
 
-GestureDetector primaryButton({
+Container primaryButton({
   VoidCallback onClick,
   String text,
   TextStyle style,
   Color color,
-  double padding = 20,
+  double width = double.infinity,
+  double radius = 5,
+  double padding = paddingLarge,
 }) {
-  return GestureDetector(
-    onTap: () {
-      onClick();
-    },
-    child: Container(
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(50),
+  return Container(
+    width: width,
+    child: RaisedButton(
+      padding: EdgeInsets.symmetric(vertical: padding),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(radius),
       ),
-      padding: EdgeInsets.all(padding),
-      child: Center(
-        child: Text(
-          text,
-          style: style,
-        ),
+      onPressed: () => onClick(),
+      color: color,
+      child: Text(
+        text,
+        style: style,
       ),
     ),
   );

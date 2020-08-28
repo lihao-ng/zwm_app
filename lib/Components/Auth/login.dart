@@ -5,8 +5,7 @@ import 'package:zwm_app/Animations/FadeAnimation.dart';
 import 'package:zwm_app/Components/Widgets/Buttons/PrimaryButton.dart';
 import 'package:zwm_app/Components/Widgets/Buttons/SecondaryButton.dart';
 import 'package:zwm_app/Components/Widgets/Inputs/InputField.dart';
-import 'package:zwm_app/Models/Auth.dart';
-import 'package:zwm_app/Services/Permissions/AuthServices.dart';
+import 'package:zwm_app/Services/AuthServices.dart';
 import 'package:zwm_app/utils.dart';
 
 class Login extends StatefulWidget {
@@ -15,20 +14,13 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final Map<String, String> _formData = {};
 
   @override
-  void dispose() {
-    emailController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    final _theme = Theme.of(context);
+    Size _size = MediaQuery.of(context).size;
 
     void onSubmit() {
       if (!_formKey.currentState.validate()) {
@@ -70,7 +62,7 @@ class _LoginState extends State<Login> {
                 FadeAnimation(
                   1,
                   Container(
-                    height: 0.35 * size.height,
+                    height: 0.35 * _size.height,
                     width: double.infinity,
                     child: Image.asset(
                       'assets/images/background4.jpg',
@@ -94,7 +86,6 @@ class _LoginState extends State<Login> {
                         1.7,
                         InputField(
                           hintText: "Your email",
-                          // controller: emailController,
                           prefixIcon: Icon(Icons.mail),
                           saved: (String value) {
                             _formData['email'] = value;
@@ -107,7 +98,6 @@ class _LoginState extends State<Login> {
                         InputField(
                           hintText: "Your password",
                           obscureText: true,
-                          // controller: passwordController,
                           prefixIcon: Icon(Icons.lock),
                           saved: (String value) {
                             _formData['password'] = value;
@@ -131,7 +121,8 @@ class _LoginState extends State<Login> {
                         2,
                         secondaryButton(
                           text: 'Create Account',
-                          color: Theme.of(context).primaryColor,
+                          color: _theme.primaryColor,
+                          style: _theme.textTheme.button,
                           onClick: () {
                             Navigator.pushNamed(context, '/register');
                           },

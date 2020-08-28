@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:zwm_app/Animations/FadeAnimation.dart';
+import 'package:zwm_app/Components/Widgets/Buttons/PrimaryButton.dart';
 import 'package:zwm_app/constants.dart';
 
 Future<void> errorAlert(BuildContext context, {title, body}) async {
@@ -28,6 +29,7 @@ Future<void> errorAlert(BuildContext context, {title, body}) async {
                   padding: EdgeInsets.all(paddingSmall),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       SizedBox(height: 40),
                       Text(
@@ -35,28 +37,23 @@ Future<void> errorAlert(BuildContext context, {title, body}) async {
                         style: _theme.textTheme.headline3.copyWith(
                           color: tertiaryColor,
                         ),
+                        textAlign: TextAlign.center,
                       ),
                       Text(
                         body,
                         style: _theme.textTheme.bodyText1.copyWith(
                           color: tertiaryColor,
                         ),
+                        textAlign: TextAlign.center,
                       ),
                       SizedBox(height: 30),
-                      Container(
+                      Padding(
                         padding: EdgeInsets.all(paddingMid),
-                        width: double.infinity,
-                        child: RaisedButton(
-                          padding: EdgeInsets.symmetric(vertical: paddingLarge),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
+                        child: primaryButton(
+                          text: 'OK',
                           color: Colors.red,
-                          textColor: accentColor,
-                          child: Text('OK'),
+                          style: _theme.textTheme.button,
+                          onClick: () => Navigator.of(context).pop(),
                         ),
                       ),
                     ],
