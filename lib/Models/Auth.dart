@@ -1,5 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zwm_app/Utils/keys.dart';
 
 @JsonSerializable()
 class Auth {
@@ -63,12 +65,16 @@ class Auth {
     onInstance(auth);
   }
 
-  static void erase({Function done}) {
+  static void erase() {
     SharedPreferences.getInstance().then((instance) {
       instance.remove("access_token");
       instance.remove("refresh_token");
       instance.remove("expires_in");
-      done();
+
+      Keys.navKey.currentState.pushNamedAndRemoveUntil(
+        '/login',
+        (Route<dynamic> route) => false,
+      );
     });
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+import 'package:zwm_app/Utils/keys.dart';
 import 'package:zwm_app/styles.dart';
 import 'package:zwm_app/routes.dart';
 
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
           button: greenBtn,
         ),
       ),
+      navigatorKey: Keys.navKey,
       onGenerateRoute: Routes.generateRoute,
       initialRoute: '/',
     );

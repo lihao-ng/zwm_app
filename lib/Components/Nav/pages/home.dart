@@ -13,6 +13,10 @@ import 'package:zwm_app/Models/Coupon.dart';
 import 'package:zwm_app/Models/Merchant.dart';
 
 import 'package:flutter/foundation.dart';
+import 'package:zwm_app/Services/MerchantServices.dart';
+import 'package:zwm_app/Utils/keys.dart';
+import 'package:zwm_app/constants.dart';
+import 'package:zwm_app/utils.dart';
 
 class Home extends StatefulWidget {
   Home({Key key}) : super(key: key);
@@ -44,7 +48,6 @@ class _HomeState extends State<Home> {
               Padding(
                 padding: EdgeInsets.symmetric(
                   horizontal: 0.03 * _size.width,
-                  vertical: 5,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -74,7 +77,8 @@ class _HomeState extends State<Home> {
                         text: 'View More',
                         color: _theme.primaryColor,
                         style: _theme.textTheme.button,
-                        padding: 11.0,
+                        width: 100,
+                        padding: paddingSmall,
                         onClick: () {
                           Navigator.pushNamed(context, '/coupons-list');
                         },
@@ -147,13 +151,10 @@ class _HomeState extends State<Home> {
                           text: 'View More',
                           color: _theme.primaryColor,
                           style: _theme.textTheme.button,
-                          padding: 11.0,
+                          width: 100,
+                          padding: paddingSmall,
                           onClick: () {
-                            // emailController.text
-                            // get value and request for auth
-
                             Navigator.pushNamed(context, '/categories');
-                            // Navigator.pushNamed(context, '/nav');
                           },
                         ),
                       ),
@@ -391,7 +392,26 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
-                          Container(
+                          GestureDetector(
+                            onTap: () => {
+                              processingDialog(context),
+                              MerchantServices().index(
+                                onSuccess: () {
+                                  Keys.navKey.currentState.pop();
+
+                                  debugPrint('OK!');
+                                },
+                                onError: (response) {
+                                  Navigator.of(context).pop();
+
+                                  errorAlert(
+                                    context,
+                                    title: "An error has occured!",
+                                    body: response,
+                                  );
+                                },
+                              )
+                            },
                             child: Column(
                               children: <Widget>[
                                 Icon(
@@ -411,14 +431,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                             ),
                           ),
                           GestureDetector(
-                            onTap: () => {
-                              Auth.erase(done: () {
-                                Navigator.of(context).pushNamedAndRemoveUntil(
-                                  '/login',
-                                  (Route<dynamic> route) => false,
-                                );
-                              })
-                            },
+                            onTap: () => Auth.erase(),
                             child: Column(
                               children: <Widget>[
                                 Icon(
