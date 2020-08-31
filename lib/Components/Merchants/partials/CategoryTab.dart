@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:zwm_app/Models/Coupon.dart';
+import 'package:zwm_app/Models/Offer.dart';
 
 class CategoryTab extends StatefulWidget {
   CategoryTabState createState() => CategoryTabState();
@@ -18,7 +18,7 @@ class CategoryTabState extends State<CategoryTab>
     return GridView.count(
       crossAxisCount: 2,
       childAspectRatio: 180 / 280,
-      children: coupons.map<Widget>((Coupon coupon) {
+      children: offers.map<Widget>((Offer offer) {
         return GestureDetector(
           // onTap: press,
           child: Card(
@@ -34,7 +34,7 @@ class CategoryTabState extends State<CategoryTab>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Image.asset(
-                    coupon.image,
+                    offer.photo,
                     fit: BoxFit.fill,
                     width: 180,
                     height: 180,
@@ -47,7 +47,7 @@ class CategoryTabState extends State<CategoryTab>
                       children: <Widget>[
                         Flexible(
                           child: Text(
-                            "${coupon.title}\n",
+                            "${offer.name}\n",
                             overflow: TextOverflow.ellipsis,
                             style: _theme.textTheme.bodyText1.copyWith(
                               fontWeight: FontWeight.bold,
@@ -57,7 +57,7 @@ class CategoryTabState extends State<CategoryTab>
                         SizedBox(height: 20),
                         Flexible(
                           child: Text(
-                            '${coupon.price} points',
+                            '${offer.points} points',
                             overflow: TextOverflow.ellipsis,
                             style: _theme.textTheme.caption,
                           ),

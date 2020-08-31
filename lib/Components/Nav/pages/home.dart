@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:zwm_app/Animations/FadeAnimation.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:countup/countup.dart';
@@ -9,11 +10,12 @@ import 'package:zwm_app/Components/Widgets/Buttons/PrimaryButton.dart';
 import 'package:zwm_app/Components/Nav/partials/home/CouponCard.dart';
 import 'package:zwm_app/Components/Nav/partials/home/MerchantCard.dart';
 import 'package:zwm_app/Models/Auth.dart';
-import 'package:zwm_app/Models/Coupon.dart';
+import 'package:zwm_app/Models/Offer.dart';
 import 'package:zwm_app/Models/Merchant.dart';
 
 import 'package:flutter/foundation.dart';
-import 'package:zwm_app/Services/MerchantServices.dart';
+import 'package:zwm_app/Services/GuideServices.dart';
+import 'package:zwm_app/Services/OfferServices.dart';
 import 'package:zwm_app/Utils/keys.dart';
 import 'package:zwm_app/constants.dart';
 import 'package:zwm_app/utils.dart';
@@ -26,9 +28,46 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  Auth _auth = new Auth();
+  List<Offer> _offers = [];
+
   @override
   void initState() {
     super.initState();
+    _loadAccount();
+    _loadCoupons();
+  }
+
+  void _loadAccount() {
+    Auth.getInstance(onInstance: (Auth auth) {
+      setState(() {
+        _auth = auth;
+      });
+    });
+  }
+
+  void _loadCoupons() {
+    OfferServices().index(
+      type: 'Promo',
+      limit: 6,
+      page: 1,
+      onSuccess: (List<Offer> offers, page) {
+        if (offers.length == 0) {
+          return;
+        }
+
+        setState(() {
+          _offers.addAll(offers);
+        });
+      },
+      onError: (response) {
+        errorAlert(
+          context,
+          title: "An error has occured!",
+          body: response,
+        );
+      },
+    );
   }
 
   @override
@@ -39,7 +78,7 @@ class _HomeState extends State<Home> {
     return CustomScrollView(
       slivers: [
         SliverPersistentHeader(
-          delegate: MySliverAppBar(expandedHeight: 320),
+          delegate: MySliverAppBar(expandedHeight: 320, auth: _auth),
           pinned: true,
         ),
         SliverList(
@@ -88,32 +127,36 @@ class _HomeState extends State<Home> {
                 ),
               ),
               SizedBox(height: 5),
-              FadeAnimation(
-                1,
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 0.03 * _size.width),
-                  height: 270,
-                  width: 180,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: 6,
-                    itemBuilder: (context, index) {
-                      return CouponCard(
-                        coupon: coupons[index],
-                        press: () => {},
-                        // press: () => Navigator.push(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //       builder: (context) => DetailsScreen(
-                        //         product: products[index],
-                        //       ),
-                        //     )),
-                      );
-                    },
-                  ),
-                ),
-              ),
-              SizedBox(height: 30),
+              _offers.length == 0
+                  ? Center(
+                      child: SpinKitPouringHourglass(
+                        color: Theme.of(context).primaryColor,
+                        size: 50.0,
+                      ),
+                    )
+                  : FadeAnimation(
+                      1,
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 0.03 * _size.width),
+                        height: 270,
+                        width: double.infinity,
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          scrollDirection: Axis.horizontal,
+                          itemCount: _offers.length,
+                          itemBuilder: (context, index) {
+                            return CouponCard(
+                              offer: _offers[index],
+                              press: () => Navigator.pushNamed(
+                                  context, '/coupon-detail',
+                                  arguments: _offers[index]),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+              SizedBox(height: spacingSmall),
               FadeAnimation(
                 1,
                 Padding(
@@ -132,7 +175,9 @@ class _HomeState extends State<Home> {
                             children: <TextSpan>[
                               TextSpan(
                                 text: 'Popular',
-                                style: TextStyle(fontSize: 22.0),
+                                style: TextStyle(
+                                  fontSize: 22.0,
+                                ),
                               ),
                               TextSpan(
                                 text: ' Shops',
@@ -199,9 +244,9 @@ class _HomeState extends State<Home> {
 
 class MySliverAppBar extends SliverPersistentHeaderDelegate {
   final double expandedHeight;
-  var _points = 75000;
+  final Auth auth;
 
-  MySliverAppBar({@required this.expandedHeight});
+  MySliverAppBar({@required this.expandedHeight, @required this.auth});
 
   @override
   Widget build(
@@ -261,7 +306,8 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
               FadeAnimation(
                 1,
                 Text(
-                  _points.toString(),
+                  auth.currentPoints.toString(),
+                  // _points.toString(),
                   style: TextStyle(
                     fontSize: 36,
                   ),
@@ -352,7 +398,11 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                           ),
                           GestureDetector(
                             onTap: () => {
-                              Navigator.pushNamed(context, '/qr-code'),
+                              Navigator.pushNamed(
+                                context,
+                                '/qr-code',
+                                arguments: auth,
+                              ),
                             },
                             child: Column(
                               children: <Widget>[
@@ -395,7 +445,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                           GestureDetector(
                             onTap: () => {
                               processingDialog(context),
-                              MerchantServices().index(
+                              GuideServices().index(
                                 onSuccess: () {
                                   Keys.navKey.currentState.pop();
 

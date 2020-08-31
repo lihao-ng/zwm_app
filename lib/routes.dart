@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:page_transition/page_transition.dart';
+import 'package:zwm_app/Models/PromoCode.dart';
 
 import 'package:zwm_app/screens.dart';
 
@@ -40,8 +41,10 @@ class Routes {
         break;
 
       case '/qr-code':
+        var auth = settings.arguments;
+
         return PageTransition(
-          child: QrCode(),
+          child: QrCode(auth: auth),
           type: PageTransitionType.fade,
           settings: settings,
         );
@@ -84,10 +87,20 @@ class Routes {
         break;
 
       case '/coupon-detail':
-        var coupon = settings.arguments;
+        var offer = settings.arguments;
 
         return PageTransition(
-          child: CouponDetail(coupon: coupon),
+          child: CouponDetail(offer: offer),
+          type: PageTransitionType.fade,
+          settings: settings,
+        );
+        break;
+
+      case '/promocode-detail':
+        var promocode = settings.arguments;
+
+        return PageTransition(
+          child: PromocodeDetail(promocode: promocode),
           type: PageTransitionType.fade,
           settings: settings,
         );

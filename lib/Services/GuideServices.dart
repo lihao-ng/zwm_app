@@ -2,7 +2,7 @@ import 'package:http/http.dart' as Http;
 import 'package:zwm_app/Models/Auth.dart';
 import 'package:zwm_app/Services/Services.dart';
 
-class MerchantServices extends Services {
+class GuideServices extends Services {
   index({
     Function onSuccess,
     Function onError,

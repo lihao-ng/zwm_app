@@ -1,18 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:json_annotation/json_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zwm_app/Utils/keys.dart';
 
-@JsonSerializable()
 class Auth {
-  String accessToken;
-
-  String expiresAt;
-
-  int userId;
-  String firstName;
-
-  String lastName;
+  String accessToken, expiresAt, firstName, lastName, code, qrCode;
+  int userId, totalPoints, currentPoints;
 
   Auth({
     this.accessToken,
@@ -20,14 +12,22 @@ class Auth {
     this.userId,
     this.firstName,
     this.lastName,
+    this.totalPoints,
+    this.currentPoints,
+    this.code,
+    this.qrCode,
   });
 
   Auth.fromJson(Map<String, dynamic> data)
-      : accessToken = data['access_token'],
+      : this.accessToken = data['access_token'],
         this.expiresAt = data['expires_at'],
         this.userId = data['user_id'],
         this.firstName = data['first_name'],
-        this.lastName = data['last_name'];
+        this.lastName = data['last_name'],
+        this.totalPoints = data['total_points'],
+        this.currentPoints = data['current_points'],
+        this.code = data['code'],
+        this.qrCode = data['qr_code'];
 
   Future save() async {
     final prefs = await SharedPreferences.getInstance();
@@ -37,6 +37,10 @@ class Auth {
     prefs.setInt('user_id', userId);
     prefs.setString('first_name', firstName);
     prefs.setString('last_name', lastName);
+    prefs.setInt('total_points', totalPoints);
+    prefs.setInt('current_points', currentPoints);
+    prefs.setString('code', code);
+    prefs.setString('qr_code', qrCode);
   }
 
   void getToken({String type = "access_token", Function onValue}) {
@@ -53,23 +57,28 @@ class Auth {
     int userId = prefs.getInt("user_id");
     String firstName = prefs.getString("first_name");
     String lastName = prefs.getString("last_name");
+    int totalPoints = prefs.getInt("total_points");
+    int currentPoints = prefs.getInt("current_points");
+    String code = prefs.getString("code");
+    String qrCode = prefs.getString("qr_code");
 
     Auth auth = Auth(
-      accessToken: accessToken,
-      expiresAt: expiresAt,
-      userId: userId,
-      firstName: firstName,
-      lastName: lastName,
-    );
+        accessToken: accessToken,
+        expiresAt: expiresAt,
+        userId: userId,
+        firstName: firstName,
+        lastName: lastName,
+        totalPoints: totalPoints,
+        currentPoints: currentPoints,
+        code: code,
+        qrCode: qrCode);
 
     onInstance(auth);
   }
 
   static void erase() {
     SharedPreferences.getInstance().then((instance) {
-      instance.remove("access_token");
-      instance.remove("refresh_token");
-      instance.remove("expires_in");
+      instance.clear();
 
       Keys.navKey.currentState.pushNamedAndRemoveUntil(
         '/login',
