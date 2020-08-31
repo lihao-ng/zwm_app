@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:zwm_app/Animations/FadeAnimation.dart';
 import 'package:zwm_app/Components/Widgets/AppBar.dart';
-import 'package:zwm_app/Models/Auth.dart';
+import 'package:zwm_app/Models/Promocode.dart';
 import 'package:zwm_app/constants.dart';
 
-class QrCode extends StatelessWidget {
-  final Auth auth;
+class PromocodeDetail extends StatelessWidget {
+  final Promocode promocode;
 
-  const QrCode({
+  const PromocodeDetail({
     Key key,
-    this.auth,
+    this.promocode,
   }) : super(key: key);
 
   @override
@@ -21,7 +21,7 @@ class QrCode extends StatelessWidget {
       appBar: appBar(),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.all(paddingLarge),
+          padding: EdgeInsets.all(paddingMid),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -48,7 +48,7 @@ class QrCode extends StatelessWidget {
               FadeAnimation(
                 1.3,
                 Text(
-                  'Show this QR Code to the staff/cashier',
+                  'Show this QR Code to the staff/cashier for redemption',
                   style: _theme.textTheme.caption,
                 ),
               ),
@@ -68,7 +68,7 @@ class QrCode extends StatelessWidget {
                       children: <Widget>[
                         FadeInImage.memoryNetwork(
                           placeholder: kTransparentImage,
-                          image: auth.qrCode,
+                          image: promocode.qrCode,
                           fit: BoxFit.fill,
                         ),
                         SizedBox(height: spacingSmall),
@@ -78,7 +78,7 @@ class QrCode extends StatelessWidget {
                         SizedBox(height: spacingSmall),
                         Center(
                           child: Text(
-                            auth.code,
+                            promocode.code,
                             style: _theme.textTheme.caption.copyWith(
                               color: primaryColor,
                               fontWeight: FontWeight.bold,

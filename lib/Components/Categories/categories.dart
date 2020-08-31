@@ -19,10 +19,7 @@ class _CategoriesState extends State<Categories> {
     return Scaffold(
       appBar: appBar(),
       body: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: paddingLarge,
-          vertical: paddingMid,
-        ),
+        padding: EdgeInsets.all(paddingMid),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[

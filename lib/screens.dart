@@ -25,3 +25,6 @@ export 'package:zwm_app/Components/Coupons/coupons_list.dart';
 
 // Coupon detail Screen
 export 'package:zwm_app/Components/Coupons/coupon_detail.dart';
+
+// Promocode detail Screen
+export 'package:zwm_app/Components/Coupons/promocode_detail.dart';
