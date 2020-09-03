@@ -34,6 +34,7 @@ class _CouponDetailState extends State<CouponDetail> {
           return;
         }
 
+        Navigator.of(context).pop();
         Keys.navKey.currentState
             .pushNamed('/promocode-detail', arguments: promocode);
       },

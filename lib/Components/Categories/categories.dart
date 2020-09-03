@@ -43,7 +43,7 @@ class _CategoriesState extends State<Categories> {
                   return GestureDetector(
                     onTap: () {
                       Navigator.pushNamed(context, '/merchants-list',
-                          arguments: category.title);
+                          arguments: category);
                     },
                     child: GridTile(
                       footer: GridTileBar(

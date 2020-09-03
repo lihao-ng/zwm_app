@@ -29,7 +29,7 @@ class MerchantCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Image.asset(
-                merchant.image,
+                merchant.photo,
                 fit: BoxFit.fill,
                 width: _size.width,
                 height: 280,

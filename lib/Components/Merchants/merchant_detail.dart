@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:transparent_image/transparent_image.dart';
 import 'package:zwm_app/Components/Merchants/partials/CategoryTab.dart';
 
 import 'package:zwm_app/Components/Widgets/AppBar.dart';
@@ -59,12 +60,20 @@ class _MerchantDetailState extends State<MerchantDetail>
             return <Widget>[
               SliverList(
                 delegate: SliverChildListDelegate([
-                  Image.asset(
-                    widget.merchant.image,
-                    fit: BoxFit.cover,
-                    width: _size.width,
-                    height: 200,
-                  ),
+                  widget.merchant.photo != ""
+                      ? FadeInImage.memoryNetwork(
+                          placeholder: kTransparentImage,
+                          image: widget.merchant.photo,
+                          fit: BoxFit.fill,
+                          width: _size.width,
+                          height: 200,
+                        )
+                      : Image.asset(
+                          'assets/images/categories/bulk.jpg',
+                          fit: BoxFit.fill,
+                          width: _size.width,
+                          height: 200,
+                        ),
                   Container(
                     padding: EdgeInsets.all(paddingMid),
                     child: Column(
@@ -100,7 +109,9 @@ class _MerchantDetailState extends State<MerchantDetail>
                             SizedBox(width: spacingSmall),
                             Expanded(
                               child: Text(
-                                widget.merchant.address,
+                                widget.merchant.address != null
+                                    ? widget.merchant.address
+                                    : '-',
                                 style: _theme.textTheme.caption.copyWith(
                                   color: primaryColor,
                                   fontWeight: FontWeight.bold,
@@ -125,7 +136,9 @@ class _MerchantDetailState extends State<MerchantDetail>
                             SizedBox(width: spacingSmall),
                             Expanded(
                               child: Text(
-                                widget.merchant.contact,
+                                widget.merchant.contact != null
+                                    ? widget.merchant.contact
+                                    : '-',
                                 style: _theme.textTheme.caption.copyWith(
                                   color: primaryColor,
                                   fontWeight: FontWeight.bold,
