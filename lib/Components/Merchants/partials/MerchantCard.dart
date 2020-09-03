@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:transparent_image/transparent_image.dart';
 import 'package:zwm_app/Models/Merchant.dart';
 import 'package:zwm_app/constants.dart';
 
@@ -39,28 +40,31 @@ class MerchantCard extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                         color: tertiaryColor,
                       ),
+                      maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
                       merchant.category,
                       style: _theme.textTheme.caption,
                       overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                     ),
                     SizedBox(height: spacingMin),
                     Text(
-                      merchant.address,
+                      merchant.address != null ? merchant.address : '-',
                       style: _theme.textTheme.caption.copyWith(
                         color: tertiaryColor,
                       ),
-                      maxLines: 2,
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                     SizedBox(height: spacingSmall),
                     Text(
-                      merchant.contact,
+                      merchant.contact != null ? merchant.contact : '-',
                       style: _theme.textTheme.bodyText1.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
@@ -69,12 +73,18 @@ class MerchantCard extends StatelessWidget {
             ),
             ClipRRect(
               borderRadius: BorderRadius.circular(5),
-              child: Image.asset(
-                merchant.image,
-                fit: BoxFit.fill,
-                width: 100,
-                height: 100,
-              ),
+              child: merchant.photo != ""
+                  ? FadeInImage.memoryNetwork(
+                      placeholder: kTransparentImage,
+                      image: merchant.photo,
+                      fit: BoxFit.fill,
+                      width: 150,
+                    )
+                  : Image.asset(
+                      'assets/images/categories/bulk.jpg',
+                      fit: BoxFit.fill,
+                      width: 150,
+                    ),
             ),
           ],
         ),

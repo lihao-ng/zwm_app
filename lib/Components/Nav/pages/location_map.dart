@@ -64,7 +64,7 @@ class _LocationMapState extends State<LocationMap> {
       _markers.add(
         Marker(
           markerId: MarkerId(merchant.id.toString()),
-          position: LatLng(merchant.lat, merchant.long),
+          position: LatLng(merchant.lat, merchant.lng),
           infoWindow:
               InfoWindow(title: merchant.name, snippet: merchant.category),
           icon: marker,

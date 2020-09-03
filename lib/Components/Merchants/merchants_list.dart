@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:zwm_app/Animations/FadeAnimation.dart';
 import 'package:zwm_app/Components/Merchants/partials/MerchantCard.dart';
 import 'package:zwm_app/Components/Widgets/AppBar.dart';
+import 'package:zwm_app/Models/Category.dart';
 import 'package:zwm_app/Models/Merchant.dart';
+import 'package:zwm_app/Services/MerchantServices.dart';
 import 'package:zwm_app/constants.dart';
+import 'package:zwm_app/utils.dart';
 
 class MerchantsList extends StatefulWidget {
-  final String category;
+  final Category category;
 
   const MerchantsList({@required this.category});
 
@@ -15,38 +19,65 @@ class MerchantsList extends StatefulWidget {
 }
 
 class _MerchantsListState extends State<MerchantsList> {
-  // final _pairList = <Merchant>[];
+  List<Merchant> _merchants = [];
+  int _page = 1;
 
-  // bool _isLoading = true;
-  // bool _hasMore = true;
-
-  // FOR LAZY LOADING LATER
-  // https://medium.com/@archelangelo/flutter-load-contents-lazily-on-scroll-made-simple-c6817f94e5d0
+  ScrollController _scrollController = new ScrollController();
 
   @override
   void initState() {
     super.initState();
-    // _isLoading = true;
-    // _hasMore = true;
-    // _loadMore();
+    _loadMerchants();
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        _loadMerchants();
+      }
+    });
   }
 
-// void _loadMore() {
-//     _isLoading = true;
-//     _itemFetcher.fetch().then((List<WordPair> fetchedList) {
-//       if (fetchedList.isEmpty) {
-//         setState(() {
-//           _isLoading = false;
-//           _hasMore = false;
-//         });
-//       } else {
-//         setState(() {
-//           _isLoading = false;
-//           _pairList.addAll(fetchedList);
-//         });
-//       }
-//     });
-//   }
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _loadMerchants() {
+    MerchantServices().index(
+      category: widget.category.value,
+      page: _page,
+      onSuccess: (List<Merchant> merchants, page) {
+        if (merchants.length == 0) {
+          return;
+        }
+        setState(() {
+          _page = page + 1;
+          _merchants.addAll(merchants);
+        });
+
+        // var future = Future(() {});
+        // for (var i = 0; i < offers.length; i++) {
+        //   future = future.then((_) {
+        //     return Future.delayed(Duration(milliseconds: 100), () {
+        //       setState(() {
+        //         _merchants.add(offers[i]);
+        //         // _merchants.currentState.insertItem(_offers.length - 1);
+        //       });
+        //     });
+        //   });
+        // }
+      },
+      onError: (response) {
+        Navigator.of(context).pop();
+        errorAlert(
+          context,
+          title: "An error has occured!",
+          body: response,
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,28 +96,37 @@ class _MerchantsListState extends State<MerchantsList> {
             FadeAnimation(
               1,
               Text(
-                widget.category,
+                widget.category.title,
                 style: _theme.textTheme.headline1,
               ),
             ),
             SizedBox(height: spacingSmall),
             Expanded(
-              child: ListView.separated(
-                itemCount: 6,
-                separatorBuilder: (BuildContext context, int index) => Divider(
-                  height: spacingMid,
-                  thickness: 2,
-                ),
-                itemBuilder: (context, index) {
-                  return MerchantCard(
-                    merchant: merchants[index],
-                    press: () => {
-                      Navigator.pushNamed(context, '/merchant-detail',
-                          arguments: merchants[index]),
-                    },
-                  );
-                },
-              ),
+              child: _merchants.length == 0
+                  ? Center(
+                      child: SpinKitPouringHourglass(
+                        color: Theme.of(context).primaryColor,
+                        size: 50.0,
+                      ),
+                    )
+                  : ListView.separated(
+                      controller: _scrollController,
+                      itemCount: _merchants.length,
+                      separatorBuilder: (BuildContext context, int index) =>
+                          Divider(
+                        height: spacingMid,
+                        thickness: 2,
+                      ),
+                      itemBuilder: (context, index) {
+                        return MerchantCard(
+                          merchant: _merchants[index],
+                          press: () => {
+                            Navigator.pushNamed(context, '/merchant-detail',
+                                arguments: _merchants[index]),
+                          },
+                        );
+                      },
+                    ),
             ),
           ],
         ),

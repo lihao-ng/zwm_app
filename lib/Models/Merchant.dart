@@ -1,19 +1,44 @@
 class Merchant {
-  final String image, name, description, contact, category, address;
+  final String name,
+      description,
+      contact,
+      category,
+      address,
+      businessHours,
+      link,
+      otherInformation,
+      photo;
   final int id;
-  final double lat, long;
+  final double lat, lng;
 
   Merchant({
     this.id,
-    this.image,
     this.name,
     this.category,
     this.description,
     this.contact,
     this.address,
     this.lat,
-    this.long,
+    this.lng,
+    this.businessHours,
+    this.link,
+    this.otherInformation,
+    this.photo,
   });
+
+  Merchant.fromJson(Map<String, dynamic> data)
+      : this.id = int.parse(data['id'].toString()),
+        this.name = data['name'],
+        this.category = data['category'],
+        this.description = data['description'],
+        this.contact = data['contact'],
+        this.address = data['address'],
+        this.lat = data['lat'],
+        this.lng = data['lng'],
+        this.businessHours = data['business_hours'],
+        this.link = data['link'],
+        this.otherInformation = data['other_information'],
+        this.photo = data['photo'];
 }
 
 List<Merchant> merchants = [
@@ -25,8 +50,8 @@ List<Merchant> merchants = [
         'No 12, SS 22/3, Taman Megah asdjl skj asldkj aldkajs laksdjals kjdaskja',
     category: 'Bulk Store',
     description: dummyText,
-    image: "assets/images/placeholder_shop.jpg",
-    long: 101.5334716,
+    photo: "assets/images/placeholder_shop.jpg",
+    lng: 101.5334716,
     lat: 2.9998159,
   ),
   Merchant(
@@ -36,8 +61,8 @@ List<Merchant> merchants = [
     address: 'No 12, SS 22/3, Taman Megah',
     category: 'Bulk Store',
     description: dummyText,
-    image: "assets/images/placeholder2.jpg",
-    long: 101.6114682,
+    photo: "assets/images/placeholder2.jpg",
+    lng: 101.6114682,
     lat: 3.1136743,
   ),
   Merchant(
@@ -47,8 +72,8 @@ List<Merchant> merchants = [
     address: 'No 12, SS 22/3, Taman Megah',
     category: 'Household Products',
     description: dummyText,
-    image: "assets/images/placeholder_shop.jpg",
-    long: 101.6808868,
+    photo: "assets/images/placeholder_shop.jpg",
+    lng: 101.6808868,
     lat: 3.0841094,
   ),
   Merchant(
@@ -58,8 +83,8 @@ List<Merchant> merchants = [
     address: 'No 12, SS 22/3, Taman Megah',
     category: 'Trift Shops',
     description: dummyText,
-    image: "assets/images/placeholder_shop.jpg",
-    long: 101.6446361,
+    photo: "assets/images/placeholder_shop.jpg",
+    lng: 101.6446361,
     lat: 3.2004111,
   ),
   Merchant(
@@ -69,8 +94,8 @@ List<Merchant> merchants = [
     address: 'No 12, SS 22/3, Taman Megah',
     category: 'Household Products',
     description: dummyText,
-    image: "assets/images/home_bg.jpg",
-    long: 101.628541,
+    photo: "assets/images/home_bg.jpg",
+    lng: 101.628541,
     lat: 3.2163753,
   ),
   Merchant(
@@ -80,8 +105,8 @@ List<Merchant> merchants = [
     address: 'No 12, SS 22/3, Taman Megah',
     category: 'Personal Care Products',
     description: dummyText,
-    image: "assets/images/placeholder.jpg",
-    long: 101.6985495,
+    photo: "assets/images/placeholder.jpg",
+    lng: 101.6985495,
     lat: 3.1437188,
   ),
 ];
