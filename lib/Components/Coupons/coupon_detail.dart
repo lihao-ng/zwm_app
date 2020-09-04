@@ -80,6 +80,8 @@ class _CouponDetailState extends State<CouponDetail> {
                       placeholder: kTransparentImage,
                       image: widget.offer.photo,
                       fit: BoxFit.fill,
+                      width: double.infinity,
+                      height: 200,
                     ),
                     SizedBox(height: spacingMin),
                     Padding(
