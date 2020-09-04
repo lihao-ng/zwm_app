@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_icons/flutter_icons.dart';
+import 'package:readmore/readmore.dart';
+import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:transparent_image/transparent_image.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:zwm_app/Components/Merchants/partials/CategoryTab.dart';
 
-import 'package:zwm_app/Components/Widgets/AppBar.dart';
 import 'package:zwm_app/Models/Merchant.dart';
 import 'package:zwm_app/constants.dart';
 
@@ -15,193 +18,339 @@ class MerchantDetail extends StatefulWidget {
   _MerchantDetailState createState() => _MerchantDetailState();
 }
 
-class _MerchantDetailState extends State<MerchantDetail>
-    with SingleTickerProviderStateMixin {
-  TabController _tabController;
-  Widget _tabBarView;
-  var _scrollController = ScrollController();
+class _MerchantDetailState extends State<MerchantDetail> {
+  AutoScrollController _autoScrollController;
+  final scrollDirection = Axis.vertical;
+
+  bool isExpaned = true;
+  bool get _isAppBarExpanded {
+    return _autoScrollController.hasClients &&
+        _autoScrollController.offset > (160 - kToolbarHeight);
+  }
 
   @override
   void initState() {
+    _autoScrollController = AutoScrollController(
+      viewportBoundaryGetter: () =>
+          Rect.fromLTRB(0, 0, 0, MediaQuery.of(context).padding.bottom),
+      axis: scrollDirection,
+    )..addListener(
+        () => _isAppBarExpanded
+            ? isExpaned != false
+                ? setState(
+                    () {
+                      isExpaned = false;
+                      print('setState is called');
+                    },
+                  )
+                : {}
+            : isExpaned != true
+                ? setState(() {
+                    print('setState is called');
+                    isExpaned = true;
+                  })
+                : {},
+      );
     super.initState();
-    _tabController = TabController(
-      length: 8,
-      vsync: this,
-    );
-    _tabBarView = TabBarView(children: [
-      CategoryTab(),
-      CategoryTab(),
-      CategoryTab(),
-      CategoryTab(),
-      CategoryTab(),
-      CategoryTab(),
-      CategoryTab(),
-      CategoryTab(),
-    ]);
   }
 
   @override
   void dispose() {
-    _tabController.dispose();
-    _scrollController.dispose();
+    _autoScrollController.dispose();
     super.dispose();
+  }
+
+  _launchURL(url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  Future _scrollToIndex(int index) async {
+    await _autoScrollController.scrollToIndex(index,
+        preferPosition: AutoScrollPosition.begin);
+    _autoScrollController.highlight(index);
+  }
+
+  Widget _wrapScrollTag({int index, Widget child}) {
+    return AutoScrollTag(
+      key: ValueKey(index),
+      controller: _autoScrollController,
+      index: index,
+      child: child,
+    );
+  }
+
+  _buildSliverAppbar(ThemeData _theme) {
+    return SliverAppBar(
+      leading: IconButton(
+        icon: Icon(Icons.arrow_back, color: accentColor),
+        onPressed: () => Navigator.of(context).pop(),
+      ),
+      automaticallyImplyLeading: false,
+      pinned: true,
+      expandedHeight: 200,
+      backgroundColor: accentColor,
+      flexibleSpace: FlexibleSpaceBar(
+        collapseMode: CollapseMode.parallax,
+        background: widget.merchant.photo != ""
+            ? FadeInImage.memoryNetwork(
+                placeholder: kTransparentImage,
+                image: widget.merchant.photo,
+                fit: BoxFit.fill,
+                width: double.infinity,
+                height: 200,
+              )
+            : Image.asset(
+                'assets/images/categories/bulk.jpg',
+                fit: BoxFit.fill,
+                width: double.infinity,
+                height: 200,
+              ),
+      ),
+      bottom: PreferredSize(
+        preferredSize: Size.fromHeight(25),
+        child: AnimatedOpacity(
+          duration: Duration(milliseconds: 500),
+          opacity: isExpaned ? 0.0 : 1,
+          child: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.fromLTRB(paddingMid, paddingSmall, 0, 0),
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      child: Icon(Icons.arrow_back, color: primaryColor),
+                      onTap: () => Navigator.of(context).pop(),
+                    ),
+                    Expanded(
+                      child: Center(
+                        child: Text(
+                          widget.merchant.name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: _theme.textTheme.bodyText1,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              DefaultTabController(
+                length: 5,
+                child: TabBar(
+                  isScrollable: true,
+                  labelColor: primaryColor,
+                  labelStyle: _theme.textTheme.bodyText1,
+                  unselectedLabelColor: tertiaryColor,
+                  unselectedLabelStyle: _theme.textTheme.caption,
+                  onTap: (index) async {
+                    _scrollToIndex(index);
+                  },
+                  tabs: [
+                    Tab(
+                      text: 'Detail Business',
+                    ),
+                    Tab(
+                      text: 'Rewards',
+                    ),
+                    Tab(
+                      text: 'Oats & Cereals',
+                    ),
+                    Tab(
+                      text: 'Biscuits & Snacks',
+                    ),
+                    Tab(
+                      text: 'Rice',
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final _theme = Theme.of(context);
-    Size _size = MediaQuery.of(context).size;
 
-    return SafeArea(
-      child: Scaffold(
-        appBar: appBar(),
-        body: NestedScrollView(
-          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-            return <Widget>[
-              SliverList(
-                delegate: SliverChildListDelegate([
-                  widget.merchant.photo != ""
-                      ? FadeInImage.memoryNetwork(
-                          placeholder: kTransparentImage,
-                          image: widget.merchant.photo,
-                          fit: BoxFit.fill,
-                          width: _size.width,
-                          height: 200,
-                        )
-                      : Image.asset(
-                          'assets/images/categories/bulk.jpg',
-                          fit: BoxFit.fill,
-                          width: _size.width,
-                          height: 200,
-                        ),
-                  Container(
-                    padding: EdgeInsets.all(paddingMid),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          widget.merchant.name,
-                          style: _theme.textTheme.headline3,
-                        ),
-                        SizedBox(height: spacingSmall),
-                        Text(
-                          widget.merchant.category,
-                          style: _theme.textTheme.caption,
-                        ),
-                        SizedBox(height: spacingSmall),
-                        Text(
-                          widget.merchant.description,
-                          style: _theme.textTheme.bodyText1
-                              .copyWith(color: tertiaryColor),
-                        ),
-                        Divider(height: spacingMid, thickness: 2),
-                        SizedBox(height: spacingSmall),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Address: ',
-                              style: _theme.textTheme.caption.copyWith(
-                                color: tertiaryColor,
-                              ),
-                            ),
-                            SizedBox(width: spacingSmall),
-                            Expanded(
-                              child: Text(
-                                widget.merchant.address != null
-                                    ? widget.merchant.address
-                                    : '-',
-                                style: _theme.textTheme.caption.copyWith(
-                                  color: primaryColor,
-                                  fontWeight: FontWeight.bold,
+    return Scaffold(
+      body: SafeArea(
+        child: CustomScrollView(
+          controller: _autoScrollController,
+          slivers: <Widget>[
+            _buildSliverAppbar(_theme),
+            SliverList(
+              delegate: SliverChildListDelegate(
+                [
+                  SizedBox(height: spacingSmall),
+                  _wrapScrollTag(
+                    index: 0,
+                    child: Container(
+                      padding: EdgeInsets.all(paddingMid),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                flex: 8,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      widget.merchant.category,
+                                      style: _theme.textTheme.caption.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(height: spacingSmall),
+                                    Text(
+                                      widget.merchant.name,
+                                      style: _theme.textTheme.headline3,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
+                                    ),
+                                    SizedBox(height: spacingSmall),
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Feather.clock,
+                                          color: tertiaryColor,
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: paddingMid,
+                                          ),
+                                          child: Text(
+                                            'Business Hours',
+                                            style: _theme.textTheme.caption
+                                                .copyWith(
+                                              fontWeight: FontWeight.bold,
+                                              color: tertiaryColor,
+                                            ),
+                                          ),
+                                        ),
+                                        Icon(
+                                          Feather.chevron_down,
+                                          color: tertiaryColor,
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: spacingSmall),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        RawMaterialButton(
+                                          onPressed: () => _launchURL(
+                                              "https://www.google.com/maps?q=loc:${widget.merchant.lat},${widget.merchant.lng}"),
+                                          elevation: 5,
+                                          fillColor: accentColor,
+                                          child: Icon(
+                                            Feather.map,
+                                            color: primaryColor,
+                                          ),
+                                          padding: EdgeInsets.all(15),
+                                          shape: CircleBorder(),
+                                          constraints: BoxConstraints(),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: paddingLarge,
+                                          ),
+                                          child: RawMaterialButton(
+                                            onPressed: () => _launchURL(
+                                                "tel:${widget.merchant.contact}"),
+                                            elevation: 5,
+                                            fillColor: accentColor,
+                                            child: Icon(
+                                              Feather.phone,
+                                              color: primaryColor,
+                                            ),
+                                            padding: EdgeInsets.all(15),
+                                            shape: CircleBorder(),
+                                            constraints: BoxConstraints(),
+                                          ),
+                                        ),
+                                        RawMaterialButton(
+                                          onPressed: () => _launchURL(
+                                              "${widget.merchant.link}"),
+                                          elevation: 5,
+                                          fillColor: accentColor,
+                                          child: Icon(
+                                            Feather.link,
+                                            color: primaryColor,
+                                          ),
+                                          padding: EdgeInsets.all(15),
+                                          shape: CircleBorder(),
+                                          constraints: BoxConstraints(),
+                                        )
+                                      ],
+                                    )
+                                  ],
                                 ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
                               ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: spacingSmall),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Contact: ',
-                              style: _theme.textTheme.caption.copyWith(
-                                color: tertiaryColor,
-                              ),
-                            ),
-                            SizedBox(width: spacingSmall),
-                            Expanded(
-                              child: Text(
-                                widget.merchant.contact != null
-                                    ? widget.merchant.contact
-                                    : '-',
-                                style: _theme.textTheme.caption.copyWith(
-                                  color: primaryColor,
-                                  fontWeight: FontWeight.bold,
+                              Expanded(
+                                flex: 2,
+                                child: ClipOval(
+                                  child: widget.merchant.photo != ""
+                                      ? Image.network(
+                                          widget.merchant.photo,
+                                          fit: BoxFit.fill,
+                                          width: 70,
+                                          height: 70,
+                                        )
+                                      : Image.asset(
+                                          'assets/images/categories/bulk.jpg',
+                                          fit: BoxFit.fill,
+                                          width: 70,
+                                          height: 70,
+                                        ),
                                 ),
-                                overflow: TextOverflow.ellipsis,
                               ),
+                            ],
+                          ),
+                          SizedBox(height: spacingLarge),
+                          ReadMoreText(
+                            widget.merchant.description,
+                            trimLines: 6,
+                            style: _theme.textTheme.bodyText1.copyWith(
+                              color: tertiaryColor,
                             ),
-                          ],
-                        ),
-                      ],
+                            colorClickableText: primaryColor,
+                            trimMode: TrimMode.Line,
+                            trimCollapsedText: '...Show more',
+                            trimExpandedText: ' show less',
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ]),
+                  _wrapScrollTag(
+                      index: 1,
+                      child: CategoryTab(
+                        name: 'Rewards',
+                      )),
+                  Container(height: spacingSmall, color: Colors.grey[200]),
+                  _wrapScrollTag(
+                      index: 2, child: CategoryTab(name: 'Oats & Cereals')),
+                  Container(height: spacingSmall, color: Colors.grey[200]),
+                  _wrapScrollTag(
+                      index: 3, child: CategoryTab(name: 'Biscuits & Snacks')),
+                  Container(height: spacingSmall, color: Colors.grey[200]),
+                  _wrapScrollTag(index: 4, child: CategoryTab(name: 'Rice')),
+                ],
               ),
-            ];
-          },
-          controller: _scrollController,
-          physics: ScrollPhysics(parent: PageScrollPhysics()),
-          body: DefaultTabController(
-            length: 8,
-            child: Column(
-              children: <Widget>[
-                Container(
-                  child: TabBar(
-                    labelColor: primaryColor,
-                    labelStyle: _theme.textTheme.bodyText1,
-                    unselectedLabelColor: tertiaryColor,
-                    unselectedLabelStyle: _theme.textTheme.caption,
-                    isScrollable: true,
-                    tabs: [
-                      Tab(
-                        text: 'Rewards',
-                      ),
-                      Tab(
-                        text: 'Eggs',
-                      ),
-                      Tab(
-                        text: 'Oats & Cereals',
-                      ),
-                      Tab(
-                        text: 'Biscuits & Snacks',
-                      ),
-                      Tab(
-                        text: 'Rice',
-                      ),
-                      Tab(
-                        text: 'Noodles & Pasta',
-                      ),
-                      Tab(
-                        text: 'Coffees, Teas & Beverages',
-                      ),
-                      Tab(
-                        text: 'Dried Fruits',
-                      )
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: Container(child: _tabBarView),
-                ),
-              ],
             ),
-          ),
+          ],
         ),
       ),
     );
