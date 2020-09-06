@@ -6,13 +6,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 import 'package:zwm_app/Components/Nav/partials/location_map/FilterDialog.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:zwm_app/Services/MerchantServices.dart';
 
 import 'package:zwm_app/Services/Permissions/LocationsService.dart';
 import 'package:zwm_app/Components/Nav/partials/location_map/SearchInput.dart';
 import 'package:zwm_app/Models/Merchant.dart';
 import 'package:zwm_app/constants.dart';
+import 'package:zwm_app/utils.dart';
 
 class LocationMap extends StatefulWidget {
   LocationMap({Key key}) : super(key: key);
@@ -31,55 +34,121 @@ class _LocationMapState extends State<LocationMap> {
   bool _showSearchBar = false;
 
   void _getMerchants() async {
+    List<BitmapDescriptor> markerIcons = List<BitmapDescriptor>();
     BitmapDescriptor marker;
+
+    markerIcons = await _loadMarkers();
+
+    MerchantServices().index(
+      category: '',
+      page: 1,
+      limit: 800,
+      onSuccess: (List<Merchant> merchants, page) async {
+        if (merchants.length == 0) {
+          return;
+        }
+
+        for (var merchant in merchants) {
+          switch (merchant.category) {
+            case 'Bulk Food':
+              marker = markerIcons[0];
+              break;
+
+            case 'Household Cleaning Product':
+              marker = markerIcons[1];
+              break;
+
+            case 'Thrift Shop (Second-hand Shop)':
+              marker = markerIcons[2];
+              break;
+
+            case 'Personal Care Product':
+              marker = markerIcons[3];
+              break;
+
+            case 'Upcycling, Recycling & Waste Disposal':
+              marker = markerIcons[4];
+              break;
+
+            case 'Community Compost Sites':
+              marker = markerIcons[5];
+              break;
+
+            case 'Repair Services':
+              marker = markerIcons[6];
+              break;
+
+            case 'Furry Friend’s Corner (Pet food and supplies)':
+              marker = markerIcons[7];
+              break;
+
+            case 'Sustainable Business & Services':
+              marker = markerIcons[8];
+              break;
+
+            case 'Traditional &amp; Wet Market':
+              marker = markerIcons[9];
+              break;
+
+            default:
+              marker = markerIcons[4];
+              break;
+          }
+
+          _markers.add(
+            Marker(
+              markerId: MarkerId(merchant.id.toString()),
+              position: LatLng(merchant.lat, merchant.lng),
+              infoWindow:
+                  InfoWindow(title: merchant.name, snippet: merchant.category),
+              icon: marker,
+              onTap: () {
+                debugPrint('marker clicked: ' +
+                    merchant.id.toString() +
+                    merchant.name.toString());
+              },
+            ),
+          );
+        }
+
+        setState(() {
+          _markers = _markers;
+        });
+      },
+      onError: (response) {
+        Navigator.of(context).pop();
+        errorAlert(
+          context,
+          title: "An error has occured!",
+          body: response,
+        );
+      },
+    );
+  }
+
+  _loadMarkers() async {
+    List<BitmapDescriptor> markerIcons = List<BitmapDescriptor>();
     String iconPath = 'assets/images/map_icons/';
-    String icon = '';
 
-    for (var merchant in merchants) {
-      switch (merchant.category) {
-        case 'Bulk Store':
-          icon = 'bulk.png';
-          break;
+    final icons = [
+      'bulk.png',
+      'household.png',
+      'thrift.png',
+      'personal_product.png',
+      'recycling_centre.png',
+      'composting.png',
+      'repair_services.png',
+      'furry.png',
+      'sus_business.png',
+      'wet_markets.png'
+    ];
 
-        case 'Household Products':
-          icon = 'household.png';
-          break;
-
-        case 'Trift Shops':
-          icon = 'thrift.png';
-          break;
-
-        case 'Personal Care Products':
-          icon = 'personal_product.png';
-          break;
-
-        default:
-          icon = 'recycling_centre.png';
-          break;
-      }
-
+    for (var icon in icons) {
       await _getBytesFromAsset(iconPath + icon, 64)
-          .then((value) => marker = BitmapDescriptor.fromBytes(value));
-
-      _markers.add(
-        Marker(
-          markerId: MarkerId(merchant.id.toString()),
-          position: LatLng(merchant.lat, merchant.lng),
-          infoWindow:
-              InfoWindow(title: merchant.name, snippet: merchant.category),
-          icon: marker,
-          onTap: () {
-            debugPrint('marker clicked: ' +
-                merchant.id.toString() +
-                merchant.name.toString());
-          },
-        ),
-      );
+          .then((value) => markerIcons.add(BitmapDescriptor.fromBytes(value)));
     }
 
-    setState(() {
-      _markers = _markers;
-    });
+    return markerIcons;
   }
 
   Future<Uint8List> _getBytesFromAsset(String path, int width) async {
@@ -157,7 +226,7 @@ class _LocationMapState extends State<LocationMap> {
             initialCameraPosition: CameraPosition(
               target: LatLng(3.0568, 101.585121),
               tilt: 30.0,
-              zoom: 13,
+              zoom: 9,
             ),
             myLocationEnabled: true,
             zoomControlsEnabled: false,
