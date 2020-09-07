@@ -1,19 +1,16 @@
-import 'dart:async';
-import 'dart:typed_data';
-import 'dart:ui' as ui;
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:zwm_app/Components/Nav/partials/location_map/FilterDialog.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:zwm_app/Services/MapServices.dart';
 import 'package:zwm_app/Services/MerchantServices.dart';
 
-import 'package:zwm_app/Services/Permissions/LocationsService.dart';
+import 'package:zwm_app/Services/LocationServices.dart';
 import 'package:zwm_app/Components/Nav/partials/location_map/SearchInput.dart';
 import 'package:zwm_app/Models/Merchant.dart';
+import 'package:zwm_app/Utils/keys.dart';
 import 'package:zwm_app/constants.dart';
 import 'package:zwm_app/utils.dart';
 
@@ -25,145 +22,89 @@ class LocationMap extends StatefulWidget {
 }
 
 class _LocationMapState extends State<LocationMap> {
-  MapType _currentMapType = MapType.normal;
+  // Load necessary services for Location(Permission) and Map(Markers)
+  LocationServices _locationServices = new LocationServices();
+  MapServices _mapServices = new MapServices();
+
+  // For the google map to load markers and animate camera
   Set<Marker> _markers = {};
+  GoogleMapController _mapController;
+
+  // For the dummy data
   var searchController = TextEditingController();
-  final duplicateItems = List<String>.generate(10000, (i) => "Item $i");
-  var items = List<String>();
-  double _width = 160;
+  List<Merchant> _merchants = List<Merchant>();
+
+  // For the animated search bar
+  double _barWidth = 160;
   bool _showSearchBar = false;
 
   void _getMerchants() async {
-    List<BitmapDescriptor> markerIcons = List<BitmapDescriptor>();
-    BitmapDescriptor marker;
-
-    markerIcons = await _loadMarkers();
-
     MerchantServices().index(
       category: '',
-      page: 1,
+      search: '',
       limit: 800,
       onSuccess: (List<Merchant> merchants, page) async {
         if (merchants.length == 0) {
           return;
         }
 
-        for (var merchant in merchants) {
-          switch (merchant.category) {
-            case 'Bulk Food':
-              marker = markerIcons[0];
-              break;
-
-            case 'Household Cleaning Product':
-              marker = markerIcons[1];
-              break;
-
-            case 'Thrift Shop (Second-hand Shop)':
-              marker = markerIcons[2];
-              break;
-
-            case 'Personal Care Product':
-              marker = markerIcons[3];
-              break;
-
-            case 'Upcycling, Recycling & Waste Disposal':
-              marker = markerIcons[4];
-              break;
-
-            case 'Community Compost Sites':
-              marker = markerIcons[5];
-              break;
-
-            case 'Repair Services':
-              marker = markerIcons[6];
-              break;
-
-            case 'Furry Friend’s Corner (Pet food and supplies)':
-              marker = markerIcons[7];
-              break;
-
-            case 'Sustainable Business & Services':
-              marker = markerIcons[8];
-              break;
-
-            case 'Traditional &amp; Wet Market':
-              marker = markerIcons[9];
-              break;
-
-            default:
-              marker = markerIcons[4];
-              break;
-          }
-
-          _markers.add(
-            Marker(
-              markerId: MarkerId(merchant.id.toString()),
-              position: LatLng(merchant.lat, merchant.lng),
-              infoWindow:
-                  InfoWindow(title: merchant.name, snippet: merchant.category),
-              icon: marker,
-              onTap: () {
-                debugPrint('marker clicked: ' +
-                    merchant.id.toString() +
-                    merchant.name.toString());
-              },
-            ),
-          );
-        }
-
         setState(() {
-          _markers = _markers;
+          _markers = _mapServices.createMarkers(merchants);
         });
       },
-      onError: (response) {
-        Navigator.of(context).pop();
-        errorAlert(
-          context,
-          title: "An error has occured!",
-          body: response,
-        );
-      },
+      onError: (response) {},
     );
   }
 
-  _loadMarkers() async {
-    List<BitmapDescriptor> markerIcons = List<BitmapDescriptor>();
-    String iconPath = 'assets/images/map_icons/';
+  void _getNearbyMerchants(lat, lng) async {
+    MerchantServices().nearby(
+      categories: '',
+      lat: lat,
+      lng: lng,
+      onSuccess: (List<Merchant> merchants) async {
+        if (merchants.length == 0) {
+          return;
+        }
 
-    final icons = [
-      'bulk.png',
-      'household.png',
-      'thrift.png',
-      'personal_product.png',
-      'recycling_centre.png',
-      'composting.png',
-      'repair_services.png',
-      'furry.png',
-      'sus_business.png',
-      'wet_markets.png'
-    ];
+        _markers.clear();
 
-    for (var icon in icons) {
-      await _getBytesFromAsset(iconPath + icon, 64)
-          .then((value) => markerIcons.add(BitmapDescriptor.fromBytes(value)));
-    }
-
-    return markerIcons;
+        setState(() {
+          _markers = _mapServices.createMarkers(merchants);
+        });
+      },
+      onError: (response) {},
+    );
   }
 
-  Future<Uint8List> _getBytesFromAsset(String path, int width) async {
-    ByteData data = await rootBundle.load(path);
-    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
-        targetWidth: width);
-    ui.FrameInfo fi = await codec.getNextFrame();
-    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))
-        .buffer
-        .asUint8List();
+  _nearbyPosition() async {
+    final givenPermission = await _locationServices.locationPermission();
+
+    if (givenPermission == false) {
+      print('Not given');
+      errorAlert(
+        context,
+        title: "An error has occured!",
+        body: 'Permission not given.',
+      );
+      return;
+    }
+
+    _locationServices.getLocation().then(
+          (LocationData locationData) => {
+            _getNearbyMerchants(locationData.latitude, locationData.longitude),
+            _mapController.animateCamera(
+              CameraUpdate.newLatLngZoom(
+                LatLng(locationData.latitude, locationData.longitude),
+                11.0, // Zoom factor
+              ),
+            ),
+          },
+        );
   }
 
   void _onSearchTap(width) {
     setState(() {
-      _width = width;
+      _barWidth = width;
     });
 
     _showSearchBar = true;
@@ -171,46 +112,54 @@ class _LocationMapState extends State<LocationMap> {
 
   void _onSearchHide() {
     setState(() {
-      _width = 160;
+      _barWidth = 160;
     });
 
     _showSearchBar = false;
   }
 
   void _filterSearchResults(String query) {
-    List<String> dummySearchList = List<String>();
-    dummySearchList.addAll(duplicateItems);
+    MerchantServices().index(
+      category: '',
+      search: query,
+      onSuccess: (List<Merchant> merchants, page) async {
+        if (merchants.length == 0) {
+          setState(() {
+            _merchants.clear();
+            _merchants.add(
+              Merchant(name: 'No results found.', category: '-', photo: ''),
+            );
+          });
 
-    debugPrint('controller value: ' + searchController.text);
-
-    if (query.isNotEmpty) {
-      List<String> dummyListData = List<String>();
-      dummySearchList.forEach((item) {
-        if (item.contains(query)) {
-          dummyListData.add(item);
+          return;
         }
-      });
 
-      setState(() {
-        items.clear();
-        items.addAll(dummyListData);
-      });
+        setState(() {
+          _merchants = merchants;
+        });
+      },
+      onError: (response) {
+        // Navigator.of(context).pop();
+        // errorAlert(
+        //   context,
+        //   title: "An error has occured!",
+        //   body: response,
+        // );
+        print('error');
+      },
+    );
+  }
 
-      return;
-    } else {
-      setState(() {
-        items.clear();
-        items.addAll(duplicateItems);
-      });
-    }
+  _setDefault() async {
+    _locationServices.locationPermission();
+    await _mapServices.loadMarkerIcons();
+    _getMerchants();
   }
 
   @override
   void initState() {
     super.initState();
-    LocationsService().locationPermission();
-    _getMerchants();
-    items.addAll(duplicateItems);
+    _setDefault();
   }
 
   @override
@@ -222,16 +171,20 @@ class _LocationMapState extends State<LocationMap> {
       body: Stack(
         children: <Widget>[
           GoogleMap(
-            mapType: _currentMapType,
+            mapType: MapType.normal,
             initialCameraPosition: CameraPosition(
-              target: LatLng(3.0568, 101.585121),
+              target: LatLng(3.127887, 101.594490),
               tilt: 30.0,
-              zoom: 9,
+              zoom: 11,
             ),
+            onMapCreated: (GoogleMapController mapController) {
+              _mapController = mapController;
+            },
             myLocationEnabled: true,
             zoomControlsEnabled: false,
             compassEnabled: false,
             myLocationButtonEnabled: false,
+            mapToolbarEnabled: false,
             markers: _markers,
           ),
           Column(
@@ -240,7 +193,7 @@ class _LocationMapState extends State<LocationMap> {
               AnimatedContainer(
                 margin: EdgeInsets.all(paddingSmall),
                 height: 60,
-                width: _width,
+                width: _barWidth,
                 duration: Duration(seconds: 1),
                 curve: Curves.fastOutSlowIn,
                 child: Card(
@@ -310,31 +263,43 @@ class _LocationMapState extends State<LocationMap> {
                     physics: BouncingScrollPhysics(),
                     scrollDirection: Axis.vertical,
                     shrinkWrap: true,
-                    itemCount: items.length,
+                    itemCount: _merchants.length,
                     itemBuilder: (context, index) {
-                      return Container(
-                        margin: EdgeInsets.symmetric(
-                          horizontal: paddingMid,
+                      return GestureDetector(
+                        onTap: () => Keys.navKey.currentState.pushNamed(
+                          '/merchant-detail',
+                          arguments: _merchants[index],
                         ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(3),
-                          color:
-                              (index % 2 == 0) ? accentColor : Colors.grey[100],
-                        ),
-                        child: ListTile(
-                          leading: CircleAvatar(
-                            backgroundImage: AssetImage(
-                                'assets/images/placeholder_shop.jpg'),
+                        child: Container(
+                          margin: EdgeInsets.symmetric(
+                            horizontal: paddingMid,
                           ),
-                          title: Text('${items[index]}',
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(3),
+                            color: (index % 2 == 0)
+                                ? accentColor
+                                : Colors.grey[100],
+                          ),
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              backgroundImage: _merchants[index].photo != ""
+                                  ? NetworkImage(_merchants[index].photo)
+                                  : AssetImage(
+                                      'assets/images/categories/bulk.jpg',
+                                    ),
+                            ),
+                            title: Text(
+                              _merchants[index].name,
                               style: _theme.textTheme.bodyText1,
-                              overflow: TextOverflow.ellipsis),
-                          subtitle: Text(
-                            'Location here akjshdkjash aksjdha',
-                            style: _theme.textTheme.caption,
-                            overflow: TextOverflow.ellipsis,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            subtitle: Text(
+                              _merchants[index].category,
+                              style: _theme.textTheme.caption,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            trailing: Icon(Icons.keyboard_arrow_right),
                           ),
-                          trailing: Icon(Icons.keyboard_arrow_right),
                         ),
                       );
                     },
@@ -346,51 +311,53 @@ class _LocationMapState extends State<LocationMap> {
           )
         ],
       ),
-      floatingActionButton: SpeedDial(
-        animatedIcon: AnimatedIcons.menu_close,
-        animatedIconTheme: IconThemeData(size: 22.0),
-        backgroundColor: primaryColor,
-        foregroundColor: accentColor,
-        closeManually: false,
-        curve: Curves.easeIn,
-        overlayColor: captionColor,
-        overlayOpacity: 0.5,
-        onOpen: () => _onSearchHide(),
-        children: [
-          SpeedDialChild(
-            child: Icon(
-              MaterialIcons.store,
-              color: accentColor,
+      floatingActionButton: Padding(
+        padding: EdgeInsets.only(bottom: 60.0),
+        child: SpeedDial(
+          animatedIcon: AnimatedIcons.menu_close,
+          animatedIconTheme: IconThemeData(size: 22.0),
+          backgroundColor: primaryColor,
+          foregroundColor: accentColor,
+          closeManually: false,
+          curve: Curves.easeIn,
+          overlayOpacity: 0,
+          onOpen: () => _onSearchHide(),
+          children: [
+            SpeedDialChild(
+              child: Icon(
+                MaterialIcons.store,
+                color: accentColor,
+              ),
+              backgroundColor: Colors.orange[200],
+              label: 'Search by Category',
+              labelStyle: _theme.textTheme.bodyText1
+                  .copyWith(fontWeight: FontWeight.bold),
+              onTap: () => Navigator.pushNamed(context, '/categories'),
             ),
-            backgroundColor: Colors.orange[200],
-            label: 'Search by Category',
-            labelStyle: _theme.textTheme.bodyText1
-                .copyWith(fontWeight: FontWeight.bold),
-            onTap: () => Navigator.pushNamed(context, '/categories'),
-          ),
-          SpeedDialChild(
-            child: Icon(
-              MaterialCommunityIcons.spray_bottle,
-              color: accentColor,
+            SpeedDialChild(
+              child: Icon(
+                MaterialCommunityIcons.spray_bottle,
+                color: accentColor,
+              ),
+              backgroundColor: Colors.lightBlue[200],
+              label: 'Search by Product',
+              labelStyle: _theme.textTheme.bodyText1
+                  .copyWith(fontWeight: FontWeight.bold),
+              onTap: () => print('SECOND CHILD'),
             ),
-            backgroundColor: Colors.lightBlue[200],
-            label: 'Search by Product',
-            labelStyle: _theme.textTheme.bodyText1
-                .copyWith(fontWeight: FontWeight.bold),
-            onTap: () => print('SECOND CHILD'),
-          ),
-          SpeedDialChild(
-            child: Icon(
-              MaterialIcons.my_location,
-              color: accentColor,
+            SpeedDialChild(
+              child: Icon(
+                MaterialIcons.my_location,
+                color: accentColor,
+              ),
+              backgroundColor: Colors.redAccent[100],
+              label: 'Search Nearby',
+              labelStyle: _theme.textTheme.bodyText1
+                  .copyWith(fontWeight: FontWeight.bold),
+              onTap: () => _nearbyPosition(),
             ),
-            backgroundColor: Colors.redAccent[100],
-            label: 'Search Nearby',
-            labelStyle: _theme.textTheme.bodyText1
-                .copyWith(fontWeight: FontWeight.bold),
-            onTap: () => {LocationsService().locationPermission()},
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

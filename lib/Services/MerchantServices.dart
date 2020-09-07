@@ -8,6 +8,7 @@ import 'package:zwm_app/Services/Services.dart';
 class MerchantServices extends Services {
   index({
     String category,
+    String search,
     int page,
     int limit = 10,
     Function onSuccess,
@@ -16,7 +17,8 @@ class MerchantServices extends Services {
     Auth.getInstance(onInstance: (Auth auth) {
       HEADERS["Authorization"] = "Bearer ${auth.accessToken}";
 
-      Http.get("$HOST/merchants?category=$category&limit=$limit&page=$page",
+      Http.get(
+              "$HOST/merchants?search=$search&category=$category&limit=$limit&page=$page",
               headers: HEADERS)
           .then((response) {
         Services.handle(
@@ -37,8 +39,8 @@ class MerchantServices extends Services {
   }
 
   nearby({
-    int lat,
-    int lng,
+    double lat,
+    double lng,
     String categories,
     Function onSuccess,
     Function onError,
@@ -53,11 +55,10 @@ class MerchantServices extends Services {
         Services.handle(
           response: response,
           valid: (responseBody) {
-            Iterable responseItems = responseBody['data'];
-            List<Merchant> offers =
+            Iterable responseItems = responseBody;
+            List<Merchant> merchants =
                 responseItems.map((item) => Merchant.fromJson(item)).toList();
-
-            onSuccess(offers, responseBody['current_page']);
+            onSuccess(merchants);
           },
           invalid: (message) {
             onError(message);
