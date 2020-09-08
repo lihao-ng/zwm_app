@@ -1,25 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:zwm_app/Models/Category.dart';
 import 'package:zwm_app/constants.dart';
 
 class FilterDialog extends StatefulWidget {
+  final List<String> selectedCategories;
+  final Function applyFilter;
+
+  FilterDialog({
+    this.selectedCategories,
+    this.applyFilter,
+  });
+
   @override
   _FilterDialogState createState() => _FilterDialogState();
 }
 
 class _FilterDialogState extends State<FilterDialog> {
-  List<String> _filters = [
-    'Bulk Food',
-    'Community Composting Surplus Food',
-    'Furry Friends Corner',
-    'Household Products',
-    'Personal Care Products',
-    'Repair Services',
-    'Sustainable Business Services',
-    'Thrift Shops Swap Corners',
-    'Traditional Wet Markets',
-    'Upcycling Recycling Waste Disposal Centres'
-  ];
-  List<String> _selectedFilters = [];
+  // List<String> _filters = [
+  //   'Bulk Food',
+  //   'Community Composting Surplus Food',
+  //   'Furry Friends Corner',
+  //   'Household Products',
+  //   'Personal Care Products',
+  //   'Repair Services',
+  //   'Sustainable Business Services',
+  //   'Thrift Shops Swap Corners',
+  //   'Traditional Wet Markets',
+  //   'Upcycling Recycling Waste Disposal Centres'
+  // ];
+  List<Category> _categories = categories;
 
   @override
   Widget build(BuildContext context) {
@@ -34,31 +43,29 @@ class _FilterDialogState extends State<FilterDialog> {
       content: Container(
         width: _size.width,
         child: ListView.builder(
-            itemCount: _filters.length,
+            itemCount: _categories.length,
             itemBuilder: (BuildContext context, int index) {
-              final cityName = _filters[index];
+              final category = _categories[index];
 
               return CheckboxListTile(
-                title: Text(cityName, style: _theme.textTheme.bodyText1),
-                value: _selectedFilters.contains(cityName),
+                title: Text(category.title, style: _theme.textTheme.bodyText1),
+                value: widget.selectedCategories.contains(category.title),
                 activeColor: primaryColor,
                 onChanged: (bool value) {
                   if (value) {
-                    if (!_selectedFilters.contains(cityName)) {
+                    if (!widget.selectedCategories.contains(category.title)) {
                       setState(() {
-                        _selectedFilters.add(cityName);
+                        widget.selectedCategories.add(category.title);
                       });
                     }
                   } else {
-                    if (_selectedFilters.contains(cityName)) {
+                    if (widget.selectedCategories.contains(category.title)) {
                       setState(() {
-                        _selectedFilters
-                            .removeWhere((String city) => city == cityName);
+                        widget.selectedCategories.removeWhere(
+                            (String value) => value == category.title);
                       });
                     }
                   }
-                  // widget
-                  //     .onSelectedFiltersListChanged(_tempSelectedFilters);
                 },
               );
             }),
@@ -73,7 +80,8 @@ class _FilterDialogState extends State<FilterDialog> {
         FlatButton(
           child: new Text('Apply'),
           onPressed: () {
-            // Navigator.of(context).pop();
+            Navigator.of(context).pop();
+            widget.applyFilter(widget.selectedCategories);
           },
         )
       ],

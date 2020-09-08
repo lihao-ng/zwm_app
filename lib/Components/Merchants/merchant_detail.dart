@@ -99,13 +99,13 @@ class _MerchantDetailState extends State<MerchantDetail> {
             ? FadeInImage.memoryNetwork(
                 placeholder: kTransparentImage,
                 image: widget.merchant.photo,
-                fit: BoxFit.fill,
+                fit: BoxFit.cover,
                 width: double.infinity,
                 height: 200,
               )
             : Image.asset(
                 'assets/images/categories/bulk.jpg',
-                fit: BoxFit.fill,
+                fit: BoxFit.cover,
                 width: double.infinity,
                 height: 200,
               ),
