@@ -10,7 +10,7 @@ class MapServices {
   Set<Marker> _markers = {};
   List<BitmapDescriptor> _markerIcons = List<BitmapDescriptor>();
 
-  createMarkers(merchants) {
+  createMarkers(merchants, Function onSearchHide) {
     BitmapDescriptor marker;
 
     for (var merchant in merchants) {
@@ -51,7 +51,7 @@ class MapServices {
           marker = _markerIcons[8];
           break;
 
-        case 'Traditional &amp; Wet Market':
+        case 'Traditional & Wet Market':
           marker = _markerIcons[9];
           break;
 
@@ -73,6 +73,7 @@ class MapServices {
             },
           ),
           icon: marker,
+          onTap: () => onSearchHide(),
         ),
       );
     }

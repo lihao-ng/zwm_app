@@ -7,19 +7,24 @@ import 'package:zwm_app/Services/Services.dart';
 
 class MerchantServices extends Services {
   index({
-    String category,
+    List<String> categories,
     String search,
     int page,
     int limit = 10,
     Function onSuccess,
     Function onError,
   }) {
+    var body = jsonEncode({
+      "categories": categories,
+      "search": search,
+      "limit": limit,
+      "page": page
+    });
+
     Auth.getInstance(onInstance: (Auth auth) {
       HEADERS["Authorization"] = "Bearer ${auth.accessToken}";
 
-      Http.get(
-              "$HOST/merchants?search=$search&category=$category&limit=$limit&page=$page",
-              headers: HEADERS)
+      Http.post("$HOST/merchants", headers: HEADERS, body: body)
           .then((response) {
         Services.handle(
           response: response,
@@ -41,7 +46,7 @@ class MerchantServices extends Services {
   nearby({
     double lat,
     double lng,
-    String categories,
+    List<String> categories,
     Function onSuccess,
     Function onError,
   }) {

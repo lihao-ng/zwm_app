@@ -45,7 +45,7 @@ class _MerchantsListState extends State<MerchantsList> {
 
   void _loadMerchants() {
     MerchantServices().index(
-      category: widget.category.value,
+      categories: [widget.category.value],
       page: _page,
       onSuccess: (List<Merchant> merchants, page) {
         if (merchants.length == 0) {

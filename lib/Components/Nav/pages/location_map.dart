@@ -1,9 +1,11 @@
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:zwm_app/Components/Nav/partials/location_map/FilterDialog.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:zwm_app/Models/Category.dart';
 import 'package:zwm_app/Services/MapServices.dart';
 import 'package:zwm_app/Services/MerchantServices.dart';
 
@@ -30,17 +32,41 @@ class _LocationMapState extends State<LocationMap> {
   Set<Marker> _markers = {};
   GoogleMapController _mapController;
 
-  // For the dummy data
-  var searchController = TextEditingController();
-  List<Merchant> _merchants = List<Merchant>();
-
   // For the animated search bar
   double _barWidth = 160;
   bool _showSearchBar = false;
 
-  void _getMerchants() async {
+  // For the search data
+  var searchController = TextEditingController();
+  List<Merchant> _merchants = List<Merchant>();
+
+  // For the filter dialog
+  List<String> _selectedCategories = List<String>.generate(
+      categories.length, (index) => categories[index].title);
+  String _apiCalled = 'index';
+
+  // For loading snackbar
+  Flushbar flushMessage = Flushbar(
+    title: "Loading",
+    message: "Retrieving merchants",
+    flushbarPosition: FlushbarPosition.TOP,
+    reverseAnimationCurve: Curves.decelerate,
+    forwardAnimationCurve: Curves.easeIn,
+    icon: Icon(Icons.info, color: primaryColor),
+    duration: Duration(seconds: 4),
+    isDismissible: false,
+    leftBarIndicatorColor: primaryColor,
+  );
+
+  _getMerchants() async {
+    if (_apiCalled != 'index') {
+      _apiCalled = 'index';
+    }
+
+    flushMessage.show(context);
+
     MerchantServices().index(
-      category: '',
+      categories: _selectedCategories,
       search: '',
       limit: 800,
       onSuccess: (List<Merchant> merchants, page) async {
@@ -48,17 +74,28 @@ class _LocationMapState extends State<LocationMap> {
           return;
         }
 
+        _markers.clear();
+
         setState(() {
-          _markers = _mapServices.createMarkers(merchants);
+          _markers = _mapServices.createMarkers(
+            merchants,
+            () => _onSearchHide(),
+          );
         });
       },
       onError: (response) {},
     );
   }
 
-  void _getNearbyMerchants(lat, lng) async {
+  _getNearbyMerchants(lat, lng) async {
+    if (_apiCalled != 'nearby') {
+      _apiCalled = 'nearby';
+    }
+
+    flushMessage.show(context);
+
     MerchantServices().nearby(
-      categories: '',
+      categories: _selectedCategories,
       lat: lat,
       lng: lng,
       onSuccess: (List<Merchant> merchants) async {
@@ -69,7 +106,10 @@ class _LocationMapState extends State<LocationMap> {
         _markers.clear();
 
         setState(() {
-          _markers = _mapServices.createMarkers(merchants);
+          _markers = _mapServices.createMarkers(
+            merchants,
+            () => _onSearchHide(),
+          );
         });
       },
       onError: (response) {},
@@ -102,7 +142,7 @@ class _LocationMapState extends State<LocationMap> {
         );
   }
 
-  void _onSearchTap(width) {
+  _onSearchTap(width) {
     setState(() {
       _barWidth = width;
     });
@@ -110,7 +150,7 @@ class _LocationMapState extends State<LocationMap> {
     _showSearchBar = true;
   }
 
-  void _onSearchHide() {
+  _onSearchHide() {
     setState(() {
       _barWidth = 160;
     });
@@ -120,7 +160,7 @@ class _LocationMapState extends State<LocationMap> {
 
   void _filterSearchResults(String query) {
     MerchantServices().index(
-      category: '',
+      categories: _selectedCategories,
       search: query,
       onSuccess: (List<Merchant> merchants, page) async {
         if (merchants.length == 0) {
@@ -148,6 +188,18 @@ class _LocationMapState extends State<LocationMap> {
         print('error');
       },
     );
+  }
+
+  _applyFilter(List<String> selectedCategories) {
+    setState(() {
+      _selectedCategories = selectedCategories;
+    });
+
+    if (_apiCalled == 'index') {
+      _getMerchants();
+    } else {
+      _nearbyPosition();
+    }
   }
 
   _setDefault() async {
@@ -209,7 +261,13 @@ class _LocationMapState extends State<LocationMap> {
                             showDialog(
                               context: context,
                               builder: (context) {
-                                return FilterDialog();
+                                return FilterDialog(
+                                  selectedCategories: _selectedCategories,
+                                  applyFilter:
+                                      (List<String> selectedCategories) => {
+                                    _applyFilter(selectedCategories),
+                                  },
+                                );
                               },
                             ),
                           },
