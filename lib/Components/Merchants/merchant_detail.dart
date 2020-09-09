@@ -4,6 +4,7 @@ import 'package:readmore/readmore.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 import 'package:zwm_app/Components/Merchants/partials/CategoryTab.dart';
 
 import 'package:zwm_app/Models/Merchant.dart';
@@ -18,8 +19,10 @@ class MerchantDetail extends StatefulWidget {
   _MerchantDetailState createState() => _MerchantDetailState();
 }
 
-class _MerchantDetailState extends State<MerchantDetail> {
+class _MerchantDetailState extends State<MerchantDetail>
+    with TickerProviderStateMixin {
   AutoScrollController _autoScrollController;
+  TabController _tabController;
   final scrollDirection = Axis.vertical;
 
   bool isExpaned = true;
@@ -51,6 +54,8 @@ class _MerchantDetailState extends State<MerchantDetail> {
                   })
                 : {},
       );
+    _tabController = new TabController(length: 5, vsync: this);
+
     super.initState();
   }
 
@@ -79,7 +84,19 @@ class _MerchantDetailState extends State<MerchantDetail> {
       key: ValueKey(index),
       controller: _autoScrollController,
       index: index,
-      child: child,
+      child: VisibilityDetector(
+        key: Key(index.toString()),
+        onVisibilityChanged: (visibilityInfo) {
+          var visiblePercentage = visibilityInfo.visibleFraction * 100;
+
+          if (visiblePercentage >= 60) {
+            _tabController.index = int.parse(visibilityInfo.key
+                .toString()
+                .replaceAll(new RegExp(r'[^0-9]'), ''));
+          }
+        },
+        child: child,
+      ),
     );
   }
 
@@ -111,7 +128,7 @@ class _MerchantDetailState extends State<MerchantDetail> {
               ),
       ),
       bottom: PreferredSize(
-        preferredSize: Size.fromHeight(25),
+        preferredSize: Size.fromHeight(45),
         child: AnimatedOpacity(
           duration: Duration(milliseconds: 500),
           opacity: isExpaned ? 0.0 : 1,
@@ -138,34 +155,55 @@ class _MerchantDetailState extends State<MerchantDetail> {
                   ],
                 ),
               ),
-              DefaultTabController(
-                length: 5,
-                child: TabBar(
-                  isScrollable: true,
-                  labelColor: primaryColor,
-                  labelStyle: _theme.textTheme.bodyText1,
-                  unselectedLabelColor: tertiaryColor,
-                  unselectedLabelStyle: _theme.textTheme.caption,
-                  onTap: (index) async {
-                    _scrollToIndex(index);
-                  },
-                  tabs: [
-                    Tab(
-                      text: 'Detail Business',
+              Padding(
+                padding: EdgeInsets.fromLTRB(
+                    paddingSmall, paddingMid, paddingSmall, paddingSmall),
+                child: DefaultTabController(
+                  length: 5,
+                  child: TabBar(
+                    controller: _tabController,
+                    isScrollable: true,
+                    labelColor: accentColor,
+                    labelStyle: TextStyle(fontWeight: FontWeight.bold),
+                    unselectedLabelColor: primaryColor,
+                    indicatorPadding: EdgeInsets.only(left: 30, right: 30),
+                    indicator: BoxDecoration(
+                      gradient: LinearGradient(
+                          colors: [primaryColor, Colors.green[300]]),
+                      borderRadius: BorderRadius.circular(50),
+                      color: primaryColor,
                     ),
-                    Tab(
-                      text: 'Rewards',
-                    ),
-                    Tab(
-                      text: 'Oats & Cereals',
-                    ),
-                    Tab(
-                      text: 'Biscuits & Snacks',
-                    ),
-                    Tab(
-                      text: 'Rice',
-                    ),
-                  ],
+                    // indicatorColor: Colors.transparent,
+                    // indicator: ShapeDecoration(
+                    //   color: primaryColor,
+                    //   shape: BeveledRectangleBorder(
+                    //     borderRadius: BorderRadius.circular(50),
+                    //     side: BorderSide(
+                    //       color: primaryColor,
+                    //     ),
+                    //   ),
+                    // ),
+                    onTap: (index) async {
+                      _scrollToIndex(index);
+                    },
+                    tabs: [
+                      Tab(
+                        text: 'Detail Business',
+                      ),
+                      Tab(
+                        text: 'Rewards',
+                      ),
+                      Tab(
+                        text: 'Oats & Cereals',
+                      ),
+                      Tab(
+                        text: 'Biscuits & Snacks',
+                      ),
+                      Tab(
+                        text: 'Rice',
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
