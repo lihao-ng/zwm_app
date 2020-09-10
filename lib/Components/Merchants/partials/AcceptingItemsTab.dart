@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:zwm_app/Models/Offer.dart';
 import 'package:zwm_app/constants.dart';
 
-class CategoryTab extends StatefulWidget {
+class AcceptingItemsTab extends StatefulWidget {
   final String name;
 
-  const CategoryTab({@required this.name});
+  const AcceptingItemsTab({@required this.name});
 
-  CategoryTabState createState() => CategoryTabState();
+  AcceptingItemsTabState createState() => AcceptingItemsTabState();
 }
 
-class CategoryTabState extends State<CategoryTab> {
+class AcceptingItemsTabState extends State<AcceptingItemsTab> {
   @override
   Widget build(BuildContext context) {
     final _theme = Theme.of(context);
@@ -20,7 +20,6 @@ class CategoryTabState extends State<CategoryTab> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: spacingSmall),
           Text(
             widget.name,
             style: _theme.textTheme.headline3,
@@ -85,6 +84,8 @@ class CategoryTabState extends State<CategoryTab> {
               );
             }).toList(),
           ),
+          SizedBox(height: spacingMid),
+          Container(height: spacingSmall, color: Colors.grey[200]),
         ],
       ),
     );

@@ -233,7 +233,7 @@ class _HomeState extends State<Home> {
                   }).toList(),
                 ),
               ),
-              SizedBox(height: 30),
+              SizedBox(height: 70),
             ],
           ),
         ),

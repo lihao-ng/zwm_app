@@ -5,10 +5,15 @@ import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:visibility_detector/visibility_detector.dart';
-import 'package:zwm_app/Components/Merchants/partials/CategoryTab.dart';
+import 'package:zwm_app/Components/Merchants/partials/AcceptingItemsTab.dart';
+import 'package:zwm_app/Components/Merchants/partials/CouponTab.dart';
+import 'package:zwm_app/Components/Merchants/partials/ProductTab.dart';
+import 'package:zwm_app/Models/Good.dart';
 
 import 'package:zwm_app/Models/Merchant.dart';
+import 'package:zwm_app/Services/GoodServices.dart';
 import 'package:zwm_app/constants.dart';
+import 'package:zwm_app/utils.dart';
 
 class MerchantDetail extends StatefulWidget {
   final Merchant merchant;
@@ -23,7 +28,8 @@ class _MerchantDetailState extends State<MerchantDetail>
     with TickerProviderStateMixin {
   AutoScrollController _autoScrollController;
   TabController _tabController;
-  final scrollDirection = Axis.vertical;
+  Good _good;
+  List<Widget> _widgets = [];
 
   bool isExpaned = true;
   bool get _isAppBarExpanded {
@@ -36,7 +42,7 @@ class _MerchantDetailState extends State<MerchantDetail>
     _autoScrollController = AutoScrollController(
       viewportBoundaryGetter: () =>
           Rect.fromLTRB(0, 0, 0, MediaQuery.of(context).padding.bottom),
-      axis: scrollDirection,
+      axis: Axis.vertical,
     )..addListener(
         () => _isAppBarExpanded
             ? isExpaned != false
@@ -54,13 +60,35 @@ class _MerchantDetailState extends State<MerchantDetail>
                   })
                 : {},
       );
-    _tabController = new TabController(length: 5, vsync: this);
+
+    _tabController = new TabController(length: 1, vsync: this);
+
+    GoodServices().index(
+      id: widget.merchant.id,
+      onSuccess: (Good good) {
+        setState(() {
+          _good = good;
+          _widgets = _listOfWidgets();
+        });
+
+        _tabController =
+            new TabController(length: good.categories.length + 1, vsync: this);
+      },
+      onError: (response) {
+        errorAlert(
+          context,
+          title: "An error has occured!",
+          body: response,
+        );
+      },
+    );
 
     super.initState();
   }
 
   @override
   void dispose() {
+    _tabController.dispose();
     _autoScrollController.dispose();
     super.dispose();
   }
@@ -159,7 +187,7 @@ class _MerchantDetailState extends State<MerchantDetail>
                 padding: EdgeInsets.fromLTRB(
                     paddingSmall, paddingMid, paddingSmall, paddingSmall),
                 child: DefaultTabController(
-                  length: 5,
+                  length: _good == null ? 1 : _good.categories.length + 1,
                   child: TabBar(
                     controller: _tabController,
                     isScrollable: true,
@@ -169,39 +197,22 @@ class _MerchantDetailState extends State<MerchantDetail>
                     indicatorPadding: EdgeInsets.only(left: 30, right: 30),
                     indicator: BoxDecoration(
                       gradient: LinearGradient(
-                          colors: [primaryColor, Colors.green[300]]),
+                          colors: [primaryColor, Colors.green[600]]),
                       borderRadius: BorderRadius.circular(50),
                       color: primaryColor,
                     ),
-                    // indicatorColor: Colors.transparent,
-                    // indicator: ShapeDecoration(
-                    //   color: primaryColor,
-                    //   shape: BeveledRectangleBorder(
-                    //     borderRadius: BorderRadius.circular(50),
-                    //     side: BorderSide(
-                    //       color: primaryColor,
-                    //     ),
-                    //   ),
-                    // ),
                     onTap: (index) async {
                       _scrollToIndex(index);
                     },
                     tabs: [
                       Tab(
-                        text: 'Detail Business',
+                        text: 'Business Details',
                       ),
-                      Tab(
-                        text: 'Rewards',
-                      ),
-                      Tab(
-                        text: 'Oats & Cereals',
-                      ),
-                      Tab(
-                        text: 'Biscuits & Snacks',
-                      ),
-                      Tab(
-                        text: 'Rice',
-                      ),
+                      if (_good != null)
+                        for (var category in _good.categories)
+                          Tab(
+                            text: category,
+                          ),
                     ],
                   ),
                 ),
@@ -211,6 +222,52 @@ class _MerchantDetailState extends State<MerchantDetail>
         ),
       ),
     );
+  }
+
+  _listOfWidgets() {
+    List<Widget> widgets = [];
+    var index = 0;
+
+    for (var offer in _good.offers) {
+      index += 1;
+
+      index == 1 && _good.categories[0] == 'Rewards'
+          ? widgets.add(
+              _wrapScrollTag(
+                index: index,
+                child: CouponTab(
+                  name: 'Rewards',
+                  coupons: offer,
+                ),
+              ),
+            )
+          : widgets.add(
+              _wrapScrollTag(
+                index: index,
+                child: AcceptingItemsTab(
+                  name: 'Accepting Items',
+                  // item: item
+                ),
+              ),
+            );
+    }
+
+    for (var product in _good.products) {
+      index += 1;
+
+      widgets.add(
+        _wrapScrollTag(
+          index: index,
+          child: ProductTab(
+            name: _good.categories[index - 1],
+            products: product,
+          ),
+          // item: item
+        ),
+      );
+    }
+
+    return widgets;
   }
 
   @override
@@ -372,19 +429,9 @@ class _MerchantDetailState extends State<MerchantDetail>
                       ),
                     ),
                   ),
-                  _wrapScrollTag(
-                      index: 1,
-                      child: CategoryTab(
-                        name: 'Rewards',
-                      )),
-                  Container(height: spacingSmall, color: Colors.grey[200]),
-                  _wrapScrollTag(
-                      index: 2, child: CategoryTab(name: 'Oats & Cereals')),
-                  Container(height: spacingSmall, color: Colors.grey[200]),
-                  _wrapScrollTag(
-                      index: 3, child: CategoryTab(name: 'Biscuits & Snacks')),
-                  Container(height: spacingSmall, color: Colors.grey[200]),
-                  _wrapScrollTag(index: 4, child: CategoryTab(name: 'Rice')),
+                  Column(
+                    children: _widgets,
+                  ),
                 ],
               ),
             ),
