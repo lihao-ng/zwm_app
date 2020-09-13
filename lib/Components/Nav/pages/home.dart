@@ -4,7 +4,6 @@ import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:zwm_app/Animations/FadeAnimation.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:countup/countup.dart';
 
 import 'package:zwm_app/Components/Widgets/Buttons/PrimaryButton.dart';
 import 'package:zwm_app/Components/Nav/partials/home/CouponCard.dart';

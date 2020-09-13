@@ -1,6 +1,9 @@
+import 'dart:ui';
+
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:google_maps_cluster_manager/google_maps_cluster_manager.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:zwm_app/Components/Nav/partials/location_map/FilterDialog.dart';
@@ -29,8 +32,10 @@ class _LocationMapState extends State<LocationMap> {
   MapServices _mapServices = new MapServices();
 
   // For the google map to load markers and animate camera
-  Set<Marker> _markers = {};
+  Set<Marker> _markers = Set();
   GoogleMapController _mapController;
+  ClusterManager _clusterManager;
+  List<ClusterItem<Merchant>> _clusterMerchants = List<ClusterItem<Merchant>>();
 
   // For the animated search bar
   double _barWidth = 160;
@@ -58,6 +63,22 @@ class _LocationMapState extends State<LocationMap> {
     leftBarIndicatorColor: primaryColor,
   );
 
+  ClusterManager _initClusterManager() {
+    return ClusterManager<Merchant>(
+      _clusterMerchants,
+      _updateMarkers,
+      levels: [1, 3.5, 5, 8, 12, 13, 14, 15, 16],
+      markerBuilder: _mapServices.markerBuilder,
+      initialZoom: 11,
+    );
+  }
+
+  void _updateMarkers(Set<Marker> markers) {
+    setState(() {
+      _markers = markers;
+    });
+  }
+
   _getMerchants() async {
     if (_apiCalled != 'index') {
       _apiCalled = 'index';
@@ -77,10 +98,20 @@ class _LocationMapState extends State<LocationMap> {
         _markers.clear();
 
         setState(() {
-          _markers = _mapServices.createMarkers(
-            merchants,
-            () => _onSearchHide(),
-          );
+          // _markers = _mapServices.createMarkers(
+          //   merchants,
+          // () => _onSearchHide(),
+          // );
+          for (var merchant in merchants) {
+            _clusterMerchants.add(
+              ClusterItem(
+                LatLng(merchant.lat, merchant.lng),
+                item: merchant,
+              ),
+            );
+          }
+
+          _clusterManager.setItems(_clusterMerchants);
         });
       },
       onError: (response) {},
@@ -103,13 +134,24 @@ class _LocationMapState extends State<LocationMap> {
           return;
         }
 
+        _clusterMerchants.clear();
         _markers.clear();
 
         setState(() {
-          _markers = _mapServices.createMarkers(
-            merchants,
-            () => _onSearchHide(),
-          );
+          // _markers = _mapServices.createMarkers(
+          //   merchants,
+          //   () => _onSearchHide(),
+          // );
+          for (var merchant in merchants) {
+            _clusterMerchants.add(
+              ClusterItem(
+                LatLng(merchant.lat, merchant.lng),
+                item: merchant,
+              ),
+            );
+          }
+
+          _clusterManager.setItems(_clusterMerchants);
         });
       },
       onError: (response) {},
@@ -135,7 +177,7 @@ class _LocationMapState extends State<LocationMap> {
             _mapController.animateCamera(
               CameraUpdate.newLatLngZoom(
                 LatLng(locationData.latitude, locationData.longitude),
-                11.0, // Zoom factor
+                13.0, // Zoom factor
               ),
             ),
           },
@@ -204,6 +246,7 @@ class _LocationMapState extends State<LocationMap> {
 
   _setDefault() async {
     _locationServices.locationPermission();
+    _clusterManager = _initClusterManager();
     await _mapServices.loadMarkerIcons();
     _getMerchants();
   }
@@ -231,7 +274,12 @@ class _LocationMapState extends State<LocationMap> {
             ),
             onMapCreated: (GoogleMapController mapController) {
               _mapController = mapController;
+              // print('CONTROLLER');
+              // print(mapController);
+              _clusterManager.setMapController(_mapController);
             },
+            onCameraMove: _clusterManager.onCameraMove,
+            onCameraIdle: _clusterManager.updateMap,
             myLocationEnabled: true,
             zoomControlsEnabled: false,
             compassEnabled: false,
