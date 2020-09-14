@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:transparent_image/transparent_image.dart';
-import 'package:zwm_app/Models/Offer.dart';
 import 'package:zwm_app/Models/Product.dart';
 import 'package:zwm_app/constants.dart';
 

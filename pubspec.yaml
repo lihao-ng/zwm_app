@@ -29,7 +29,6 @@ dependencies:
   simple_animations: ^2.2.1
   page_transition: "^1.1.6" 
   curved_navigation_bar: ^0.3.3
-  countup: ^0.1.0
   carousel_slider: ^2.2.1
   flare_flutter: ^2.0.6
   liquid_progress_indicator: ^0.3.2
@@ -45,7 +44,7 @@ dependencies:
   scroll_to_index: ^1.0.6
   url_launcher: ^5.5.2
   readmore: ^1.0.0
-  fluster: ^1.1.2
+  google_maps_cluster_manager: ^0.1.0
   flushbar: ^1.10.4
   visibility_detector: ^0.1.5
 
