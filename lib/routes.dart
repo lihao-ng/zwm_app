@@ -125,6 +125,22 @@ class Routes {
         );
         break;
 
+      case '/guide-categories':
+        return PageTransition(
+          child: GuideCategories(),
+          type: PageTransitionType.fade,
+          settings: settings,
+        );
+        break;
+
+      case '/guide-search':
+        return PageTransition(
+          child: GuideSearch(),
+          type: PageTransitionType.downToUp,
+          settings: settings,
+        );
+        break;
+
       default:
         return null;
     }

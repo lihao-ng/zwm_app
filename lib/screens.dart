@@ -32,3 +32,7 @@ export 'package:zwm_app/Components/Coupons/coupon_detail.dart';
 
 // Promocode Detail Screen
 export 'package:zwm_app/Components/Coupons/promocode_detail.dart';
+
+// Guide Screen
+export 'package:zwm_app/Components/Guides/guide_categories.dart';
+export 'package:zwm_app/Components/Guides/guide_search.dart';

@@ -451,23 +451,26 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                         children: <Widget>[
                           GestureDetector(
                             onTap: () => {
-                              processingDialog(context),
-                              GuideServices().index(
-                                onSuccess: () {
-                                  Keys.navKey.currentState.pop();
+                              Navigator.pushNamed(
+                                context,
+                                '/guide-categories',
+                              ),
+                              // GuideServices().index(
+                              //   onSuccess: () {
+                              //     Keys.navKey.currentState.pop();
 
-                                  debugPrint('OK!');
-                                },
-                                onError: (response) {
-                                  Navigator.of(context).pop();
+                              //     debugPrint('OK!');
+                              //   },
+                              //   onError: (response) {
+                              //     Navigator.of(context).pop();
 
-                                  errorAlert(
-                                    context,
-                                    title: "An error has occured!",
-                                    body: response,
-                                  );
-                                },
-                              )
+                              //     errorAlert(
+                              //       context,
+                              //       title: "An error has occured!",
+                              //       body: response,
+                              //     );
+                              //   },
+                              // )
                             },
                             child: Column(
                               children: <Widget>[

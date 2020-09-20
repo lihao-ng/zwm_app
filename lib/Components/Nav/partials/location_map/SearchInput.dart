@@ -24,7 +24,6 @@ class _SearchInputState extends State<SearchInput> {
         padding: const EdgeInsets.only(left: paddingSmall),
         child: TextField(
           onChanged: (value) {
-            debugPrint('controller value inside: ' + widget.controller.text);
             widget.filter(value);
           },
           decoration: InputDecoration(
