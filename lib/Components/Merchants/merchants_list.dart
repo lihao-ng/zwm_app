@@ -27,6 +27,7 @@ class _MerchantsListState extends State<MerchantsList> {
   @override
   void initState() {
     super.initState();
+
     _loadMerchants();
 
     _scrollController.addListener(() {
@@ -55,18 +56,6 @@ class _MerchantsListState extends State<MerchantsList> {
           _page = page + 1;
           _merchants.addAll(merchants);
         });
-
-        // var future = Future(() {});
-        // for (var i = 0; i < offers.length; i++) {
-        //   future = future.then((_) {
-        //     return Future.delayed(Duration(milliseconds: 100), () {
-        //       setState(() {
-        //         _merchants.add(offers[i]);
-        //         // _merchants.currentState.insertItem(_offers.length - 1);
-        //       });
-        //     });
-        //   });
-        // }
       },
       onError: (response) {
         Navigator.of(context).pop();

@@ -103,7 +103,7 @@ class _VirtualWorldState extends State<VirtualWorld> {
                   width: _size.width,
                   height: 300,
                   child: FlareActor(
-                    'assets/images/walking.flr',
+                    'assets/images/girl_walking.flr',
                     alignment: Alignment.center,
                     fit: BoxFit.contain,
                     animation: animationName,

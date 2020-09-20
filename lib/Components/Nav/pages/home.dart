@@ -420,21 +420,29 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                               ],
                             ),
                           ),
-                          Container(
-                            child: Column(children: <Widget>[
-                              Icon(
-                                FontAwesome.camera_retro,
-                                color: Theme.of(context).primaryColor,
-                                size: 30,
+                          GestureDetector(
+                            onTap: () => {
+                              Navigator.pushNamed(
+                                context,
+                                '/classification',
                               ),
-                              SizedBox(height: 5),
-                              Text(
-                                'Scanner',
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ]),
+                            },
+                            child: Container(
+                              child: Column(children: <Widget>[
+                                Icon(
+                                  FontAwesome.camera_retro,
+                                  color: Theme.of(context).primaryColor,
+                                  size: 30,
+                                ),
+                                SizedBox(height: 5),
+                                Text(
+                                  'Scanner',
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ]),
+                            ),
                           ),
                         ],
                       ),

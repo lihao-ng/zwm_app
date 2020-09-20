@@ -43,32 +43,33 @@ class _FilterDialogState extends State<FilterDialog> {
       content: Container(
         width: _size.width,
         child: ListView.builder(
-            itemCount: _categories.length,
-            itemBuilder: (BuildContext context, int index) {
-              final category = _categories[index];
+          itemCount: _categories.length,
+          itemBuilder: (BuildContext context, int index) {
+            final category = _categories[index];
 
-              return CheckboxListTile(
-                title: Text(category.title, style: _theme.textTheme.bodyText1),
-                value: widget.selectedCategories.contains(category.title),
-                activeColor: primaryColor,
-                onChanged: (bool value) {
-                  if (value) {
-                    if (!widget.selectedCategories.contains(category.title)) {
-                      setState(() {
-                        widget.selectedCategories.add(category.title);
-                      });
-                    }
-                  } else {
-                    if (widget.selectedCategories.contains(category.title)) {
-                      setState(() {
-                        widget.selectedCategories.removeWhere(
-                            (String value) => value == category.title);
-                      });
-                    }
+            return CheckboxListTile(
+              title: Text(category.title, style: _theme.textTheme.bodyText1),
+              value: widget.selectedCategories.contains(category.title),
+              activeColor: primaryColor,
+              onChanged: (bool value) {
+                if (value) {
+                  if (!widget.selectedCategories.contains(category.title)) {
+                    setState(() {
+                      widget.selectedCategories.add(category.title);
+                    });
                   }
-                },
-              );
-            }),
+                } else {
+                  if (widget.selectedCategories.contains(category.title)) {
+                    setState(() {
+                      widget.selectedCategories.removeWhere(
+                          (String value) => value == category.title);
+                    });
+                  }
+                }
+              },
+            );
+          },
+        ),
       ),
       actions: <Widget>[
         FlatButton(

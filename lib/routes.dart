@@ -48,6 +48,27 @@ class Routes {
         );
         break;
 
+      case '/classification':
+        return PageTransition(
+          child: Classification(),
+          type: PageTransitionType.fade,
+          settings: settings,
+        );
+        break;
+
+      case '/classification-result':
+        ClassificationResult classificationResult = settings.arguments;
+
+        return PageTransition(
+          child: ClassificationResult(
+            classifications: classificationResult.classifications,
+            imagePath: classificationResult.imagePath,
+          ),
+          type: PageTransitionType.fade,
+          settings: settings,
+        );
+        break;
+
       case '/categories':
         return PageTransition(
           child: Categories(),
