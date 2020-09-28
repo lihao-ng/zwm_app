@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:zwm_app/constants.dart';
 
 class InputField extends StatefulWidget {
-  final String hintText;
+  final String hintText, initialValue, defaultText;
   final Widget prefixIcon;
-  final String defaultText;
   final bool obscureText;
   final TextEditingController controller;
   final Function saved;
@@ -13,6 +12,7 @@ class InputField extends StatefulWidget {
     @required this.hintText,
     this.defaultText,
     this.obscureText = false,
+    this.initialValue = '',
     this.controller,
     this.prefixIcon,
     this.saved,
@@ -29,6 +29,7 @@ class _InputFieldState extends State<InputField> {
   Widget build(BuildContext context) {
     return TextFormField(
       obscureText: widget.obscureText,
+      initialValue: widget.initialValue,
       decoration: InputDecoration(
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(color: captionColor, width: 1.0),

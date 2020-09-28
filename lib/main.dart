@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: zwmGreen,
         primaryColor: zwmGreen[900],
         accentColor: Colors.white,
-        scaffoldBackgroundColor: Colors.white,
+        scaffoldBackgroundColor: Colors.grey[200],
         textTheme: TextTheme(
           headline1: greenHeadline,
           headline2: whiteHeadline,

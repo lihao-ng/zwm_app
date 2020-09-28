@@ -17,39 +17,39 @@ class _LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
   final Map<String, String> _formData = {};
 
+  void onSubmit() {
+    if (!_formKey.currentState.validate()) {
+      return;
+    }
+
+    _formKey.currentState.save();
+
+    processingDialog(context);
+
+    AuthServices().login(
+      email: _formData["email"],
+      password: _formData["password"],
+      onSuccess: () {
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          '/nav',
+          (Route<dynamic> route) => false,
+        );
+      },
+      onError: (response) {
+        Navigator.of(context).pop();
+        errorAlert(
+          context,
+          title: "An error has occured!",
+          body: response,
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final _theme = Theme.of(context);
     Size _size = MediaQuery.of(context).size;
-
-    void onSubmit() {
-      if (!_formKey.currentState.validate()) {
-        return;
-      }
-
-      _formKey.currentState.save();
-
-      processingDialog(context);
-
-      AuthServices().login(
-        email: _formData["email"],
-        password: _formData["password"],
-        onSuccess: () {
-          Navigator.of(context).pushNamedAndRemoveUntil(
-            '/nav',
-            (Route<dynamic> route) => false,
-          );
-        },
-        onError: (response) {
-          Navigator.of(context).pop();
-          errorAlert(
-            context,
-            title: "An error has occured!",
-            body: response,
-          );
-        },
-      );
-    }
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
