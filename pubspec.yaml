@@ -47,7 +47,13 @@ dependencies:
   google_maps_cluster_manager: ^0.1.0
   flushbar: ^1.10.4
   visibility_detector: ^0.1.5
-
+  tflite: ^1.1.1
+  image_picker: ^0.6.2
+  camera: ^0.5.7+4
+  path_provider: ^1.6.14
+  path: ^1.7.0
+  percent_indicator: "^2.1.6"
+  expandable: ^4.1.4
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.3
@@ -73,6 +79,7 @@ flutter:
     - assets/images/
     - assets/images/map_icons/
     - assets/images/categories/
+    - assets/classifications/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

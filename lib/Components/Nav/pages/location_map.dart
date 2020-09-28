@@ -221,12 +221,6 @@ class _LocationMapState extends State<LocationMap> {
         });
       },
       onError: (response) {
-        // Navigator.of(context).pop();
-        // errorAlert(
-        //   context,
-        //   title: "An error has occured!",
-        //   body: response,
-        // );
         print('error');
       },
     );

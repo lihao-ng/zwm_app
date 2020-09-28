@@ -48,6 +48,27 @@ class Routes {
         );
         break;
 
+      case '/classification':
+        return PageTransition(
+          child: Classification(),
+          type: PageTransitionType.fade,
+          settings: settings,
+        );
+        break;
+
+      case '/classification-result':
+        ClassificationResult classificationResult = settings.arguments;
+
+        return PageTransition(
+          child: ClassificationResult(
+            classifications: classificationResult.classifications,
+            imagePath: classificationResult.imagePath,
+          ),
+          type: PageTransitionType.fade,
+          settings: settings,
+        );
+        break;
+
       case '/categories':
         return PageTransition(
           child: Categories(),
@@ -100,6 +121,42 @@ class Routes {
         return PageTransition(
           child: PromocodeDetail(promocode: promocode),
           type: PageTransitionType.fade,
+          settings: settings,
+        );
+        break;
+
+      case '/guide-categories':
+        return PageTransition(
+          child: GuideCategories(),
+          type: PageTransitionType.fade,
+          settings: settings,
+        );
+        break;
+
+      case '/guide-list':
+        var category = settings.arguments;
+
+        return PageTransition(
+          child: GuideList(category: category),
+          type: PageTransitionType.fade,
+          settings: settings,
+        );
+        break;
+
+      case '/guide-search':
+        return PageTransition(
+          child: GuideSearch(),
+          type: PageTransitionType.downToUp,
+          settings: settings,
+        );
+        break;
+
+      case '/guide-detail':
+        var guide = settings.arguments;
+
+        return PageTransition(
+          child: GuideDetail(guide: guide),
+          type: PageTransitionType.downToUp,
           settings: settings,
         );
         break;

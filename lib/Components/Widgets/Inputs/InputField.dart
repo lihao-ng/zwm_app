@@ -52,6 +52,7 @@ class _InputFieldState extends State<InputField> {
 
 String commonValidation(String value, String messageError) {
   var required = requiredValidator(value, messageError);
+
   if (required != null) {
     return required;
   }

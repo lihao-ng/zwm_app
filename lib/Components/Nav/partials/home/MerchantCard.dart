@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:transparent_image/transparent_image.dart';
 import 'package:zwm_app/Models/Merchant.dart';
 
 class MerchantCard extends StatelessWidget {
@@ -28,12 +29,20 @@ class MerchantCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Image.asset(
-                merchant.photo,
-                fit: BoxFit.fill,
-                width: _size.width,
-                height: 280,
-              ),
+              merchant.photo != ""
+                  ? FadeInImage.memoryNetwork(
+                      placeholder: kTransparentImage,
+                      image: merchant.photo,
+                      fit: BoxFit.fill,
+                      width: _size.width,
+                      height: 280,
+                    )
+                  : Image.asset(
+                      'assets/images/categories/bulk.jpg',
+                      fit: BoxFit.fill,
+                      width: _size.width,
+                      height: 280,
+                    ),
               Container(
                 height: 110,
                 padding: EdgeInsets.all(10),

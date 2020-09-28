@@ -29,7 +29,7 @@ class Auth {
         this.code = data['code'],
         this.qrCode = data['qr_code'];
 
-  Future save() async {
+  save() async {
     final prefs = await SharedPreferences.getInstance();
 
     prefs.setString('access_token', accessToken);
@@ -47,6 +47,13 @@ class Auth {
     SharedPreferences.getInstance().then((instance) {
       onValue(instance.getString(type));
     });
+  }
+
+  static void updatePoints({totalPoints, currentPoints}) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    prefs.setInt('total_points', totalPoints);
+    prefs.setInt('current_points', currentPoints);
   }
 
   static void getInstance({Function onInstance}) async {
