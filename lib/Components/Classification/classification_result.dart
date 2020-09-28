@@ -6,8 +6,11 @@ import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:zwm_app/Components/Widgets/AppBar.dart';
 import 'package:zwm_app/Components/Widgets/Buttons/PrimaryButton.dart';
 import 'package:zwm_app/Models/Classify.dart';
+import 'package:zwm_app/Models/Guide.dart';
+import 'package:zwm_app/Services/GuideServices.dart';
 import 'package:zwm_app/Utils/keys.dart';
 import 'package:zwm_app/constants.dart';
+import 'package:zwm_app/utils.dart';
 
 class ClassificationResult extends StatefulWidget {
   final List<Classify> classifications;
@@ -21,7 +24,7 @@ class ClassificationResult extends StatefulWidget {
 }
 
 class _ClassificationResult extends State<ClassificationResult> {
-  void _showResultsDialog() {
+  _showResultsDialog() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -88,6 +91,41 @@ class _ClassificationResult extends State<ClassificationResult> {
               },
             ),
           ],
+        );
+      },
+    );
+  }
+
+  _onLearnMore() {
+    processingDialog(context);
+
+    GuideServices().index(
+      search: widget.classifications[0].label,
+      page: 1,
+      limit: 1,
+      onSuccess: (List<Guide> guides, page) {
+        if (guides.length == 0) {
+          Navigator.of(context).pop();
+          errorAlert(
+            context,
+            title: "An error has occured!",
+            body: "Could not find results in our database",
+          );
+
+          return;
+        }
+
+        Keys.navKey.currentState.pushReplacementNamed(
+          '/guide-detail',
+          arguments: guides[0],
+        );
+      },
+      onError: (response) {
+        Navigator.of(context).pop();
+        errorAlert(
+          context,
+          title: "An error has occured!",
+          body: response,
         );
       },
     );
@@ -194,9 +232,7 @@ class _ClassificationResult extends State<ClassificationResult> {
                           style: Theme.of(context).textTheme.button,
                           width: 100,
                           padding: paddingSmall,
-                          onClick: () {
-                            // onSubmit();
-                          },
+                          onClick: () => {_onLearnMore()},
                         ),
                       ],
                     )

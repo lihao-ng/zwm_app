@@ -133,9 +133,29 @@ class Routes {
         );
         break;
 
+      case '/guide-list':
+        var category = settings.arguments;
+
+        return PageTransition(
+          child: GuideList(category: category),
+          type: PageTransitionType.fade,
+          settings: settings,
+        );
+        break;
+
       case '/guide-search':
         return PageTransition(
           child: GuideSearch(),
+          type: PageTransitionType.downToUp,
+          settings: settings,
+        );
+        break;
+
+      case '/guide-detail':
+        var guide = settings.arguments;
+
+        return PageTransition(
+          child: GuideDetail(guide: guide),
           type: PageTransitionType.downToUp,
           settings: settings,
         );

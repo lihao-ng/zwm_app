@@ -60,4 +60,30 @@ class AuthServices extends Services {
       );
     });
   }
+
+  updatePoints({Function onSuccess, Function onError}) {
+    Auth.getInstance(onInstance: (Auth auth) {
+      HEADERS["Authorization"] = "Bearer ${auth.accessToken}";
+
+      Http.get("$HOST/get-points", headers: HEADERS).then((response) {
+        Services.handle(
+          response: response,
+          valid: (responseBody) {
+            Auth.updatePoints(
+              totalPoints: responseBody['total_points'],
+              currentPoints: responseBody['current_points'],
+            );
+
+            onSuccess(
+              responseBody['total_points'],
+              responseBody['current_points'],
+            );
+          },
+          invalid: (message) {
+            onError(message);
+          },
+        );
+      });
+    });
+  }
 }

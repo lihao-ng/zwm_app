@@ -8,12 +8,16 @@ import 'package:zwm_app/Services/GuideServices.dart';
 import 'package:zwm_app/constants.dart';
 import 'package:zwm_app/utils.dart';
 
-class GuideSearch extends StatefulWidget {
+class GuideList extends StatefulWidget {
+  final String category;
+
+  const GuideList({@required this.category});
+
   @override
-  _GuideSearchState createState() => _GuideSearchState();
+  _GuideListState createState() => _GuideListState();
 }
 
-class _GuideSearchState extends State<GuideSearch> {
+class _GuideListState extends State<GuideList> {
   List<Guide> _guides = [];
   int _page = 1;
 
@@ -50,6 +54,7 @@ class _GuideSearchState extends State<GuideSearch> {
 
     GuideServices().index(
       search: _searchValue,
+      category: widget.category,
       page: search == false ? _page : 1,
       limit: 300,
       onSuccess: (List<Guide> guides, page) {
@@ -94,12 +99,11 @@ class _GuideSearchState extends State<GuideSearch> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              'Search',
+              widget.category,
               style: _theme.textTheme.headline1,
             ),
             SizedBox(height: spacingSmall),
             TextField(
-              autofocus: true,
               controller: searchController,
               onChanged: (value) {
                 _filterSearchResults(value);

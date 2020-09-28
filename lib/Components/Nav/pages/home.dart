@@ -13,9 +13,9 @@ import 'package:zwm_app/Models/Offer.dart';
 import 'package:zwm_app/Models/Merchant.dart';
 
 import 'package:flutter/foundation.dart';
-import 'package:zwm_app/Services/GuideServices.dart';
+import 'package:zwm_app/Services/AuthServices.dart';
+import 'package:zwm_app/Services/MerchantServices.dart';
 import 'package:zwm_app/Services/OfferServices.dart';
-import 'package:zwm_app/Utils/keys.dart';
 import 'package:zwm_app/constants.dart';
 import 'package:zwm_app/utils.dart';
 
@@ -29,15 +29,28 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   Auth _auth = new Auth();
   List<Offer> _offers = [];
+  List<Merchant> _merchants = [];
+
+  int _currentPoints = 0;
 
   @override
   void initState() {
     super.initState();
     _loadAccount();
     _loadCoupons();
+    _loadMerchants();
   }
 
-  void _loadAccount() {
+  _loadAccount() {
+    AuthServices().updatePoints(
+      onSuccess: (totalPoints, currentPoints) {
+        setState(() {
+          _currentPoints = currentPoints;
+        });
+      },
+      onError: () {},
+    );
+
     Auth.getInstance(onInstance: (Auth auth) {
       setState(() {
         _auth = auth;
@@ -45,7 +58,7 @@ class _HomeState extends State<Home> {
     });
   }
 
-  void _loadCoupons() {
+  _loadCoupons() {
     OfferServices().index(
       type: 'Promo',
       limit: 6,
@@ -69,6 +82,29 @@ class _HomeState extends State<Home> {
     );
   }
 
+  _loadMerchants() {
+    MerchantServices().index(
+      limit: 6,
+      page: 1,
+      onSuccess: (List<Merchant> merchants, page) {
+        if (merchants.length == 0) {
+          return;
+        }
+        setState(() {
+          _merchants.addAll(merchants);
+        });
+      },
+      onError: (response) {
+        Navigator.of(context).pop();
+        errorAlert(
+          context,
+          title: "An error has occured!",
+          body: response,
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final _theme = Theme.of(context);
@@ -77,7 +113,8 @@ class _HomeState extends State<Home> {
     return CustomScrollView(
       slivers: [
         SliverPersistentHeader(
-          delegate: MySliverAppBar(expandedHeight: 320, auth: _auth),
+          delegate: MySliverAppBar(
+              expandedHeight: 250, auth: _auth, currentPoints: _currentPoints),
           pinned: true,
         ),
         SliverList(
@@ -173,7 +210,7 @@ class _HomeState extends State<Home> {
                             style: Theme.of(context).textTheme.bodyText1,
                             children: <TextSpan>[
                               TextSpan(
-                                text: 'Popular',
+                                text: 'New',
                                 style: TextStyle(
                                   fontSize: 22.0,
                                 ),
@@ -207,31 +244,42 @@ class _HomeState extends State<Home> {
                 ),
               ),
               SizedBox(height: 5),
-              FadeAnimation(
-                1,
-                CarouselSlider(
-                  options: CarouselOptions(
-                    height: 400.0,
-                    autoPlay: true,
-                    autoPlayInterval: Duration(seconds: 4),
-                    autoPlayAnimationDuration: Duration(milliseconds: 1200),
-                    autoPlayCurve: Curves.easeInOutBack,
-                  ),
-                  items: merchants.map((merchant) {
-                    return Builder(builder: (BuildContext context) {
-                      return Container(
-                        height: MediaQuery.of(context).size.height * 0.30,
-                        width: MediaQuery.of(context).size.width,
-                        child: MerchantCard(
-                          merchant: merchant,
-                          press: () =>
-                              {debugPrint('merchant id: ${merchant.id}')},
+              _merchants.length == 0
+                  ? Center(
+                      child: SpinKitPouringHourglass(
+                        color: Theme.of(context).primaryColor,
+                        size: 50.0,
+                      ),
+                    )
+                  : FadeAnimation(
+                      1,
+                      CarouselSlider(
+                        options: CarouselOptions(
+                          height: 400.0,
+                          autoPlay: true,
+                          autoPlayInterval: Duration(seconds: 4),
+                          autoPlayAnimationDuration:
+                              Duration(milliseconds: 1200),
+                          autoPlayCurve: Curves.easeInOutBack,
                         ),
-                      );
-                    });
-                  }).toList(),
-                ),
-              ),
+                        items: _merchants.map((merchant) {
+                          return Builder(builder: (BuildContext context) {
+                            return Container(
+                              height: MediaQuery.of(context).size.height * 0.30,
+                              width: MediaQuery.of(context).size.width,
+                              child: MerchantCard(
+                                merchant: merchant,
+                                press: () => Navigator.pushNamed(
+                                  context,
+                                  '/merchant-detail',
+                                  arguments: merchant,
+                                ),
+                              ),
+                            );
+                          });
+                        }).toList(),
+                      ),
+                    ),
               SizedBox(height: 70),
             ],
           ),
@@ -244,8 +292,12 @@ class _HomeState extends State<Home> {
 class MySliverAppBar extends SliverPersistentHeaderDelegate {
   final double expandedHeight;
   final Auth auth;
+  final int currentPoints;
 
-  MySliverAppBar({@required this.expandedHeight, @required this.auth});
+  MySliverAppBar(
+      {@required this.expandedHeight,
+      @required this.auth,
+      @required this.currentPoints});
 
   @override
   Widget build(
@@ -305,22 +357,12 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
               FadeAnimation(
                 1,
                 Text(
-                  auth.currentPoints.toString(),
-                  // _points.toString(),
+                  currentPoints.toString(),
                   style: TextStyle(
                     fontSize: 36,
                   ),
                 ),
               ),
-              // Countup(
-              //   begin: _points - 5000,
-              //   end: _points,
-              //   duration: Duration(milliseconds: 1000),
-              //   separator: ',',
-              // style: TextStyle(
-              //   fontSize: 36,
-              // ),
-              // ),
             ],
           ),
         ),
@@ -355,14 +397,16 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
           ),
         ),
         Positioned(
-          top: expandedHeight / 2.3 - shrinkOffset,
+          top: expandedHeight / 1.5 - shrinkOffset,
           left: _size.width / 40,
           width: 0.95 * _size.width,
-          height: 160,
+          height: 80,
           child: FadeAnimation(
             1,
-            Opacity(
-              opacity: (1 - shrinkOffset / expandedHeight),
+            AnimatedOpacity(
+              opacity: shrinkOffset == 0 ? 1 : 0,
+              duration: Duration(milliseconds: 200),
+              // opacity: (1 - shrinkOffset / expandedHeight),
               child: Card(
                 elevation: 5,
                 child: Padding(
@@ -386,7 +430,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                                 ),
                                 SizedBox(height: 5),
                                 Text(
-                                  'Categories',
+                                  'Shops',
                                   style: TextStyle(
                                     color: Colors.black,
                                     fontWeight: FontWeight.bold,
@@ -444,33 +488,12 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                               ]),
                             ),
                           ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
                           GestureDetector(
                             onTap: () => {
                               Navigator.pushNamed(
                                 context,
                                 '/guide-categories',
                               ),
-                              // GuideServices().index(
-                              //   onSuccess: () {
-                              //     Keys.navKey.currentState.pop();
-
-                              //     debugPrint('OK!');
-                              //   },
-                              //   onError: (response) {
-                              //     Navigator.of(context).pop();
-
-                              //     errorAlert(
-                              //       context,
-                              //       title: "An error has occured!",
-                              //       body: response,
-                              //     );
-                              //   },
-                              // )
                             },
                             child: Column(
                               children: <Widget>[
@@ -490,27 +513,58 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                               ],
                             ),
                           ),
-                          GestureDetector(
-                            onTap: () => Auth.erase(),
-                            child: Column(
-                              children: <Widget>[
-                                Icon(
-                                  Entypo.wallet,
-                                  color: Theme.of(context).primaryColor,
-                                  size: 30,
-                                ),
-                                SizedBox(height: 5),
-                                Text(
-                                  'Wallet',
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ],
-                            ),
-                          ),
                         ],
                       ),
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      //   children: <Widget>[
+                      //     GestureDetector(
+                      //       onTap: () => {
+                      //         Navigator.pushNamed(
+                      //           context,
+                      //           '/guide-categories',
+                      //         ),
+
+                      //       },
+                      //       child: Column(
+                      //         children: <Widget>[
+                      //           Icon(
+                      //             Entypo.open_book,
+                      //             color: Theme.of(context).primaryColor,
+                      //             size: 30,
+                      //           ),
+                      //           SizedBox(height: 5),
+                      //           Text(
+                      //             'Guides',
+                      //             style: TextStyle(
+                      //               color: Colors.black,
+                      //               fontWeight: FontWeight.bold,
+                      //             ),
+                      //           ),
+                      //         ],
+                      //       ),
+                      //     ),
+                      //     GestureDetector(
+                      //       onTap: () => Auth.erase(),
+                      //       child: Column(
+                      //         children: <Widget>[
+                      //           Icon(
+                      //             Entypo.wallet,
+                      //             color: Theme.of(context).primaryColor,
+                      //             size: 30,
+                      //           ),
+                      //           SizedBox(height: 5),
+                      //           Text(
+                      //             'Wallet',
+                      //             style: TextStyle(
+                      //                 color: Colors.black,
+                      //                 fontWeight: FontWeight.bold),
+                      //           ),
+                      //         ],
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
                     ],
                   ),
                 ),

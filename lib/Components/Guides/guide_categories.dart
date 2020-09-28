@@ -62,11 +62,11 @@ class _GuideCategoriesState extends State<GuideCategories> {
                     guideCategories.map<Widget>((GuideCategory guideCategory) {
                   return GestureDetector(
                     onTap: () {
-                      // Navigator.pushNamed(
-                      //   context,
-                      //   '/merchants-list',
-                      //   arguments: guideCategory,
-                      // );
+                      Navigator.pushNamed(
+                        context,
+                        '/guide-list',
+                        arguments: guideCategory.title,
+                      );
                     },
                     child: GridTile(
                       footer: GridTileBar(
