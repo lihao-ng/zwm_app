@@ -1,3 +1,4 @@
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -20,11 +21,24 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final Map<String, String> _formData = {};
+
   Auth _auth = Auth();
 
-  double _height = MediaQuery.of(Keys.navKey.currentContext).size.height / 2.5;
+  double _height = MediaQuery.of(Keys.navKey.currentContext).size.height / 2;
 
   TabController _tabController;
+
+  Flushbar flushMessage = Flushbar(
+    title: "Success",
+    message: "Profile updated successfully",
+    flushbarPosition: FlushbarPosition.TOP,
+    reverseAnimationCurve: Curves.decelerate,
+    forwardAnimationCurve: Curves.easeIn,
+    icon: Icon(Icons.check, color: primaryColor),
+    duration: Duration(seconds: 4),
+    isDismissible: false,
+    leftBarIndicatorColor: primaryColor,
+  );
 
   _loadAccount() {
     Auth.getInstance(onInstance: (Auth auth) {
@@ -43,7 +57,7 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
     _tabController.addListener(() {
       setState(() {
         if (_tabController.index == 0) {
-          _height = MediaQuery.of(context).size.height / 2.5;
+          _height = MediaQuery.of(context).size.height / 2;
         } else {
           _height = 120;
         }
@@ -60,24 +74,26 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
 
     processingDialog(context);
 
-    // AuthServices().login(
-    //   email: _formData["email"],
-    //   password: _formData["password"],
-    //   onSuccess: () {
-    //     Navigator.of(context).pushNamedAndRemoveUntil(
-    //       '/nav',
-    //       (Route<dynamic> route) => false,
-    //     );
-    //   },
-    //   onError: (response) {
-    //     Navigator.of(context).pop();
-    //     errorAlert(
-    //       context,
-    //       title: "An error has occured!",
-    //       body: response,
-    //     );
-    //   },
-    // );
+    AuthServices().updateAccount(
+      accessToken: _auth.accessToken,
+      firstName: _formData["first_name"],
+      lastName: _formData["last_name"],
+      password: _formData["password"],
+      passwordConfirmation: _formData["password_confirmation"],
+      onSuccess: () {
+        _loadAccount();
+        Navigator.of(context).pop();
+        flushMessage.show(context);
+      },
+      onError: (response) {
+        Navigator.of(context).pop();
+        errorAlert(
+          context,
+          title: "An error has occured!",
+          body: response,
+        );
+      },
+    );
   }
 
   @override
@@ -92,141 +108,141 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
     Size _size = MediaQuery.of(context).size;
 
     return Scaffold(
-        resizeToAvoidBottomInset: true,
-        appBar: appBar(),
-        body: _auth.accessToken != null
-            ? SafeArea(
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: paddingMid),
-                    child: Column(
-                      children: <Widget>[
-                        SizedBox(height: 40),
-                        Stack(
-                          overflow: Overflow.visible,
-                          children: [
-                            SizedBox(
-                              height: 170,
-                              width: _size.width,
-                              child: Card(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15.0),
+      resizeToAvoidBottomInset: true,
+      appBar: appBar(),
+      body: _auth.accessToken != null
+          ? SafeArea(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: paddingMid),
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(height: 40),
+                      Stack(
+                        overflow: Overflow.visible,
+                        children: [
+                          SizedBox(
+                            height: 170,
+                            width: _size.width,
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                  left: paddingMid,
+                                  right: paddingMid,
+                                  top: paddingMid,
                                 ),
-                                child: Padding(
-                                  padding: EdgeInsets.only(
-                                    left: paddingMid,
-                                    right: paddingMid,
-                                    top: paddingMid,
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: <Widget>[
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          Text(
-                                            'Total Points: ',
-                                            style: _theme.textTheme.caption
-                                                .copyWith(
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          Text(
-                                            _auth.totalPoints.toString(),
-                                            style: _theme.textTheme.bodyText1
-                                                .copyWith(
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                      SizedBox(height: spacingLarge),
-                                      Padding(
-                                        padding: EdgeInsets.only(left: 15),
-                                        child: Text(
-                                          _auth.firstName +
-                                              ' ' +
-                                              _auth.lastName,
-                                          style: _theme.textTheme.headline3,
-                                        ),
-                                      ),
-                                      SizedBox(height: spacingSmall),
-                                      Padding(
-                                        padding: EdgeInsets.only(left: 15),
-                                        child: Text(
-                                          'nglihao98@gmail.com',
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: <Widget>[
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Text(
+                                          'Total Points: ',
                                           style:
                                               _theme.textTheme.caption.copyWith(
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
-                                      ),
-                                      Center(
-                                        child: DefaultTabController(
-                                          length: 2,
-                                          child: TabBar(
-                                            controller: _tabController,
-                                            isScrollable: true,
-                                            labelColor: primaryColor,
-                                            labelStyle: TextStyle(
-                                                fontWeight: FontWeight.bold),
-                                            unselectedLabelColor: captionColor,
-                                            indicatorPadding: EdgeInsets.only(
-                                                left: 30, right: 30),
-                                            indicator: BoxDecoration(
-                                              border: Border(
-                                                bottom: BorderSide(
-                                                  color: primaryColor,
-                                                  width: 3.0,
-                                                ),
-                                              ),
-                                            ),
-                                            tabs: [
-                                              Tab(
-                                                text: 'Summary',
-                                              ),
-                                              Tab(
-                                                text: 'Settings',
-                                              ),
-                                            ],
+                                        Text(
+                                          _auth.totalPoints.toString(),
+                                          style: _theme.textTheme.bodyText1
+                                              .copyWith(
+                                            fontWeight: FontWeight.bold,
                                           ),
+                                        )
+                                      ],
+                                    ),
+                                    SizedBox(height: spacingLarge),
+                                    Padding(
+                                      padding: EdgeInsets.only(left: 15),
+                                      child: Text(
+                                        _auth.firstName + ' ' + _auth.lastName,
+                                        style: _theme.textTheme.headline3,
+                                      ),
+                                    ),
+                                    SizedBox(height: spacingSmall),
+                                    Padding(
+                                      padding: EdgeInsets.only(left: 15),
+                                      child: Text(
+                                        _auth.email.toString(),
+                                        style:
+                                            _theme.textTheme.caption.copyWith(
+                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                    Center(
+                                      child: DefaultTabController(
+                                        length: 2,
+                                        child: TabBar(
+                                          controller: _tabController,
+                                          isScrollable: true,
+                                          labelColor: primaryColor,
+                                          labelStyle: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                          unselectedLabelColor: captionColor,
+                                          indicatorPadding: EdgeInsets.only(
+                                              left: 30, right: 30),
+                                          indicator: BoxDecoration(
+                                            border: Border(
+                                              bottom: BorderSide(
+                                                color: primaryColor,
+                                                width: 3.0,
+                                              ),
+                                            ),
+                                          ),
+                                          tabs: [
+                                            Tab(
+                                              text: 'Summary',
+                                            ),
+                                            Tab(
+                                              text: 'Settings',
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
-                            Positioned(
-                              top: -30,
-                              left: 25,
-                              child: CircleAvatar(
-                                radius: 40,
-                                backgroundImage: AssetImage(
-                                  'assets/images/home_bg.jpg',
-                                ),
+                          ),
+                          Positioned(
+                            top: -30,
+                            left: 25,
+                            child: CircleAvatar(
+                              radius: 40,
+                              backgroundImage: AssetImage(
+                                'assets/images/home_bg.jpg',
                               ),
                             ),
-                          ],
-                        ),
-                        AnimatedContainer(
-                          height: _height,
-                          duration: Duration(milliseconds: 500),
-                          child: Card(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15.0),
-                            ),
-                            child: Padding(
-                              padding: EdgeInsets.all(paddingLarge),
-                              child: TabBarView(
-                                controller: _tabController,
-                                children: <Widget>[
-                                  Center(
+                          ),
+                        ],
+                      ),
+                      AnimatedContainer(
+                        height: _height,
+                        duration: Duration(milliseconds: 500),
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.all(paddingLarge),
+                            child: TabBarView(
+                              controller: _tabController,
+                              children: <Widget>[
+                                Center(
+                                  child: Form(
+                                    key: _formKey,
                                     child: ListView(
+                                      shrinkWrap: true,
                                       children: [
+                                        SizedBox(height: spacingMin),
                                         InputField(
                                           hintText: "Your first name",
                                           prefixIcon: Icon(
@@ -280,31 +296,33 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                                       ],
                                     ),
                                   ),
-                                  Center(
-                                    child: primaryButton(
-                                      text: 'Log Out',
-                                      color: Colors.red[700],
-                                      style: _theme.textTheme.button,
-                                      onClick: () {
-                                        Auth.erase();
-                                      },
-                                    ),
+                                ),
+                                Center(
+                                  child: primaryButton(
+                                    text: 'Log Out',
+                                    color: Colors.red[700],
+                                    style: _theme.textTheme.button,
+                                    onClick: () {
+                                      Auth.erase();
+                                    },
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
-              )
-            : Center(
-                child: SpinKitPouringHourglass(
-                  color: Theme.of(context).primaryColor,
-                  size: 50.0,
-                ),
-              ));
+              ),
+            )
+          : Center(
+              child: SpinKitPouringHourglass(
+                color: Theme.of(context).primaryColor,
+                size: 50.0,
+              ),
+            ),
+    );
   }
 }

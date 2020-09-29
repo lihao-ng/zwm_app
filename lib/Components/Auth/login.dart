@@ -6,6 +6,7 @@ import 'package:zwm_app/Components/Widgets/Buttons/PrimaryButton.dart';
 import 'package:zwm_app/Components/Widgets/Buttons/SecondaryButton.dart';
 import 'package:zwm_app/Components/Widgets/Inputs/InputField.dart';
 import 'package:zwm_app/Services/AuthServices.dart';
+import 'package:zwm_app/constants.dart';
 import 'package:zwm_app/utils.dart';
 
 class Login extends StatefulWidget {
@@ -53,6 +54,7 @@ class _LoginState extends State<Login> {
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
+      backgroundColor: accentColor,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Form(

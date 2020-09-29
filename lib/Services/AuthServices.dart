@@ -61,6 +61,43 @@ class AuthServices extends Services {
     });
   }
 
+  updateAccount({
+    String accessToken,
+    String firstName,
+    String lastName,
+    String password,
+    String passwordConfirmation,
+    Function onSuccess,
+    Function onError,
+  }) {
+    HEADERS["Authorization"] = "Bearer $accessToken";
+
+    var body = jsonEncode({
+      "first_name": firstName,
+      "last_name": lastName,
+      "password": password,
+      "password_confirmation": passwordConfirmation,
+    });
+
+    Http.post("$HOST/update-account", headers: HEADERS, body: body)
+        .then((response) {
+      Services.handle(
+        response: response,
+        valid: (responseBody) {
+          Auth.updateAccount(
+            firstName: responseBody['first_name'],
+            lastName: responseBody['last_name'],
+          );
+
+          onSuccess();
+        },
+        invalid: (message) {
+          onError(message);
+        },
+      );
+    });
+  }
+
   updatePoints({Function onSuccess, Function onError}) {
     Auth.getInstance(onInstance: (Auth auth) {
       HEADERS["Authorization"] = "Bearer ${auth.accessToken}";
