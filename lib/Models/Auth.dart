@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zwm_app/Utils/keys.dart';
 
 class Auth {
-  String accessToken, expiresAt, firstName, lastName, code, qrCode;
+  String accessToken, expiresAt, firstName, lastName, code, qrCode, email;
   int userId, totalPoints, currentPoints;
 
   Auth({
@@ -12,6 +12,7 @@ class Auth {
     this.userId,
     this.firstName,
     this.lastName,
+    this.email,
     this.totalPoints,
     this.currentPoints,
     this.code,
@@ -24,6 +25,7 @@ class Auth {
         this.userId = data['user_id'],
         this.firstName = data['first_name'],
         this.lastName = data['last_name'],
+        this.email = data['email'],
         this.totalPoints = data['total_points'],
         this.currentPoints = data['current_points'],
         this.code = data['code'],
@@ -37,6 +39,7 @@ class Auth {
     prefs.setInt('user_id', userId);
     prefs.setString('first_name', firstName);
     prefs.setString('last_name', lastName);
+    prefs.setString('email', email);
     prefs.setInt('total_points', totalPoints);
     prefs.setInt('current_points', currentPoints);
     prefs.setString('code', code);
@@ -47,6 +50,13 @@ class Auth {
     SharedPreferences.getInstance().then((instance) {
       onValue(instance.getString(type));
     });
+  }
+
+  static void updateAccount({firstName, lastName}) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    prefs.setString('first_name', firstName);
+    prefs.setString('last_name', lastName);
   }
 
   static void updatePoints({totalPoints, currentPoints}) async {
@@ -64,6 +74,7 @@ class Auth {
     int userId = prefs.getInt("user_id");
     String firstName = prefs.getString("first_name");
     String lastName = prefs.getString("last_name");
+    String email = prefs.getString("email");
     int totalPoints = prefs.getInt("total_points");
     int currentPoints = prefs.getInt("current_points");
     String code = prefs.getString("code");
@@ -75,6 +86,7 @@ class Auth {
         userId: userId,
         firstName: firstName,
         lastName: lastName,
+        email: email,
         totalPoints: totalPoints,
         currentPoints: currentPoints,
         code: code,

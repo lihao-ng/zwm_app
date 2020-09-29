@@ -109,6 +109,8 @@ class _GuideListState extends State<GuideList> {
                 _filterSearchResults(value);
               },
               decoration: InputDecoration(
+                fillColor: accentColor,
+                filled: true,
                 border: new OutlineInputBorder(
                   borderRadius: const BorderRadius.all(
                     const Radius.circular(50.0),

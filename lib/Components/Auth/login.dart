@@ -6,6 +6,7 @@ import 'package:zwm_app/Components/Widgets/Buttons/PrimaryButton.dart';
 import 'package:zwm_app/Components/Widgets/Buttons/SecondaryButton.dart';
 import 'package:zwm_app/Components/Widgets/Inputs/InputField.dart';
 import 'package:zwm_app/Services/AuthServices.dart';
+import 'package:zwm_app/constants.dart';
 import 'package:zwm_app/utils.dart';
 
 class Login extends StatefulWidget {
@@ -17,42 +18,43 @@ class _LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
   final Map<String, String> _formData = {};
 
+  void onSubmit() {
+    if (!_formKey.currentState.validate()) {
+      return;
+    }
+
+    _formKey.currentState.save();
+
+    processingDialog(context);
+
+    AuthServices().login(
+      email: _formData["email"],
+      password: _formData["password"],
+      onSuccess: () {
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          '/nav',
+          (Route<dynamic> route) => false,
+        );
+      },
+      onError: (response) {
+        Navigator.of(context).pop();
+        errorAlert(
+          context,
+          title: "An error has occured!",
+          body: response,
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final _theme = Theme.of(context);
     Size _size = MediaQuery.of(context).size;
 
-    void onSubmit() {
-      if (!_formKey.currentState.validate()) {
-        return;
-      }
-
-      _formKey.currentState.save();
-
-      processingDialog(context);
-
-      AuthServices().login(
-        email: _formData["email"],
-        password: _formData["password"],
-        onSuccess: () {
-          Navigator.of(context).pushNamedAndRemoveUntil(
-            '/nav',
-            (Route<dynamic> route) => false,
-          );
-        },
-        onError: (response) {
-          Navigator.of(context).pop();
-          errorAlert(
-            context,
-            title: "An error has occured!",
-            body: response,
-          );
-        },
-      );
-    }
-
     return Scaffold(
       resizeToAvoidBottomInset: true,
+      backgroundColor: accentColor,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Form(

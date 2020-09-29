@@ -63,6 +63,7 @@ class _RegisterState extends State<Register> {
 
     return Scaffold(
       appBar: appBar(),
+      backgroundColor: accentColor,
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(30),
