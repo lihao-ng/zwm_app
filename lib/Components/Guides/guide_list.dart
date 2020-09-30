@@ -64,11 +64,11 @@ class _GuideListState extends State<GuideList> {
           }
 
           _guides.addAll(guides);
-
           _loading = false;
         });
       },
       onError: (response) {
+        _loading = false;
         Navigator.of(context).pop();
         errorAlert(
           context,

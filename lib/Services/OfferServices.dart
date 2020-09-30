@@ -15,7 +15,7 @@ class OfferServices extends Services {
     Auth.getInstance(onInstance: (Auth auth) {
       HEADERS["Authorization"] = "Bearer ${auth.accessToken}";
 
-      Http.get("$HOST/offers?type=$type&limit=$limit&page=$page",
+      Http.get("$HOST/offer?type=$type&limit=$limit&page=$page",
               headers: HEADERS)
           .then((response) {
         Services.handle(
