@@ -156,7 +156,27 @@ class Routes {
 
         return PageTransition(
           child: GuideDetail(guide: guide),
-          type: PageTransitionType.downToUp,
+          type: PageTransitionType.fade,
+          settings: settings,
+        );
+        break;
+
+      case '/product-search':
+        return PageTransition(
+          child: ProductSearch(),
+          type: PageTransitionType.fade,
+          settings: settings,
+        );
+        break;
+      case '/product-detail':
+        ProductDetail productDetail = settings.arguments;
+
+        return PageTransition(
+          child: ProductDetail(
+            product: productDetail.product,
+            redirect: productDetail.redirect,
+          ),
+          type: PageTransitionType.fade,
           settings: settings,
         );
         break;

@@ -38,3 +38,7 @@ export 'package:zwm_app/Components/Guides/guide_categories.dart';
 export 'package:zwm_app/Components/Guides/guide_list.dart';
 export 'package:zwm_app/Components/Guides/guide_search.dart';
 export 'package:zwm_app/Components/Guides/guide_detail.dart';
+
+// Product Screen
+export 'package:zwm_app/Components/Products/product_search.dart';
+export 'package:zwm_app/Components/Products/product_detail.dart';

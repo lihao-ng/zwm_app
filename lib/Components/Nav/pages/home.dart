@@ -31,6 +31,9 @@ class _HomeState extends State<Home> {
   List<Offer> _offers = [];
   List<Merchant> _merchants = [];
 
+  bool _offersLoading = true;
+  bool _merchantsLoading = true;
+
   int _currentPoints = 0;
 
   @override
@@ -59,11 +62,14 @@ class _HomeState extends State<Home> {
   }
 
   _loadCoupons() {
+    _offersLoading = true;
+
     OfferServices().index(
       type: 'Promo',
       limit: 6,
       page: 1,
       onSuccess: (List<Offer> offers, page) {
+        _offersLoading = false;
         if (offers.length == 0) {
           return;
         }
@@ -73,6 +79,8 @@ class _HomeState extends State<Home> {
         });
       },
       onError: (response) {
+        _offersLoading = false;
+
         errorAlert(
           context,
           title: "An error has occured!",
@@ -83,10 +91,13 @@ class _HomeState extends State<Home> {
   }
 
   _loadMerchants() {
+    _merchantsLoading = true;
+
     MerchantServices().index(
       limit: 6,
       page: 1,
       onSuccess: (List<Merchant> merchants, page) {
+        _merchantsLoading = false;
         if (merchants.length == 0) {
           return;
         }
@@ -95,6 +106,8 @@ class _HomeState extends State<Home> {
         });
       },
       onError: (response) {
+        _merchantsLoading = false;
+
         Navigator.of(context).pop();
         errorAlert(
           context,
@@ -163,35 +176,42 @@ class _HomeState extends State<Home> {
                 ),
               ),
               SizedBox(height: 5),
-              _offers.length == 0
+              _offersLoading == true
                   ? Center(
                       child: SpinKitPouringHourglass(
                         color: Theme.of(context).primaryColor,
                         size: 50.0,
                       ),
                     )
-                  : FadeAnimation(
-                      1,
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 0.03 * _size.width),
-                        height: 270,
-                        width: double.infinity,
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          scrollDirection: Axis.horizontal,
-                          itemCount: _offers.length,
-                          itemBuilder: (context, index) {
-                            return CouponCard(
-                              offer: _offers[index],
-                              press: () => Navigator.pushNamed(
-                                  context, '/coupon-detail',
-                                  arguments: _offers[index]),
-                            );
-                          },
+                  : _offers.length == 0
+                      ? Center(
+                          child: Text(
+                            'No results found.',
+                            style: _theme.textTheme.headline3,
+                          ),
+                        )
+                      : FadeAnimation(
+                          1,
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 0.03 * _size.width),
+                            height: 270,
+                            width: double.infinity,
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              scrollDirection: Axis.horizontal,
+                              itemCount: _offers.length,
+                              itemBuilder: (context, index) {
+                                return CouponCard(
+                                  offer: _offers[index],
+                                  press: () => Navigator.pushNamed(
+                                      context, '/coupon-detail',
+                                      arguments: _offers[index]),
+                                );
+                              },
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
               SizedBox(height: spacingSmall),
               FadeAnimation(
                 1,
@@ -244,42 +264,50 @@ class _HomeState extends State<Home> {
                 ),
               ),
               SizedBox(height: 5),
-              _merchants.length == 0
+              _merchantsLoading == true
                   ? Center(
                       child: SpinKitPouringHourglass(
                         color: Theme.of(context).primaryColor,
                         size: 50.0,
                       ),
                     )
-                  : FadeAnimation(
-                      1,
-                      CarouselSlider(
-                        options: CarouselOptions(
-                          height: 400.0,
-                          autoPlay: true,
-                          autoPlayInterval: Duration(seconds: 4),
-                          autoPlayAnimationDuration:
-                              Duration(milliseconds: 1200),
-                          autoPlayCurve: Curves.easeInOutBack,
+                  : _merchants.length == 0
+                      ? Center(
+                          child: Text(
+                            'No results found.',
+                            style: _theme.textTheme.headline3,
+                          ),
+                        )
+                      : FadeAnimation(
+                          1,
+                          CarouselSlider(
+                            options: CarouselOptions(
+                              height: 400.0,
+                              autoPlay: true,
+                              autoPlayInterval: Duration(seconds: 4),
+                              autoPlayAnimationDuration:
+                                  Duration(milliseconds: 1200),
+                              autoPlayCurve: Curves.easeInOutBack,
+                            ),
+                            items: _merchants.map((merchant) {
+                              return Builder(builder: (BuildContext context) {
+                                return Container(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.30,
+                                  width: MediaQuery.of(context).size.width,
+                                  child: MerchantCard(
+                                    merchant: merchant,
+                                    press: () => Navigator.pushNamed(
+                                      context,
+                                      '/merchant-detail',
+                                      arguments: merchant,
+                                    ),
+                                  ),
+                                );
+                              });
+                            }).toList(),
+                          ),
                         ),
-                        items: _merchants.map((merchant) {
-                          return Builder(builder: (BuildContext context) {
-                            return Container(
-                              height: MediaQuery.of(context).size.height * 0.30,
-                              width: MediaQuery.of(context).size.width,
-                              child: MerchantCard(
-                                merchant: merchant,
-                                press: () => Navigator.pushNamed(
-                                  context,
-                                  '/merchant-detail',
-                                  arguments: merchant,
-                                ),
-                              ),
-                            );
-                          });
-                        }).toList(),
-                      ),
-                    ),
               SizedBox(height: 70),
             ],
           ),

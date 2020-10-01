@@ -87,167 +87,102 @@ class _GuideDetailState extends State<GuideDetail> {
                     trimCollapsedText: '...Show more',
                     trimExpandedText: ' show less',
                   ),
-                  SizedBox(height: spacingSmall),
-                  ExpandableNotifier(
-                    child: Card(
-                      clipBehavior: Clip.antiAlias,
-                      child: Column(
-                        children: <Widget>[
-                          SizedBox(
-                            height: 150,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.orange,
-                                shape: BoxShape.rectangle,
-                              ),
+                  SizedBox(height: spacingMid),
+                  for (var guideContent in widget.guide.guideContents)
+                    ExpandableNotifier(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(
+                              5.0,
                             ),
                           ),
-                          ScrollOnExpand(
-                            scrollOnExpand: true,
-                            scrollOnCollapse: false,
-                            child: ExpandablePanel(
-                              theme: const ExpandableThemeData(
-                                headerAlignment:
-                                    ExpandablePanelHeaderAlignment.center,
-                                tapBodyToCollapse: true,
+                          color: guideContent.name == 'Reuse' ||
+                                  guideContent.name == 'Reduce'
+                              ? primaryColor
+                              : Colors.yellow[900],
+                        ),
+                        margin: EdgeInsets.only(bottom: spacingMid),
+                        clipBehavior: Clip.antiAlias,
+                        child: Column(
+                          children: <Widget>[
+                            SizedBox(
+                              height: 150,
+                              width: double.infinity,
+                              child: Image.asset(
+                                'assets/images/categories/recycling_centre.jpg',
+                                fit: BoxFit.cover,
                               ),
-                              header: Padding(
-                                padding: EdgeInsets.all(paddingMid),
-                                child: Text(
-                                  "ExpandablePanel",
-                                  style: _theme.textTheme.headline3
-                                      .copyWith(fontSize: 18),
+                            ),
+                            ScrollOnExpand(
+                              scrollOnExpand: true,
+                              scrollOnCollapse: false,
+                              child: ExpandablePanel(
+                                theme: const ExpandableThemeData(
+                                  headerAlignment:
+                                      ExpandablePanelHeaderAlignment.center,
+                                  tapBodyToCollapse: true,
+                                  iconColor: accentColor,
                                 ),
-                              ),
-                              collapsed: Text(
-                                widget.guide.description,
-                                softWrap: true,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: _theme.textTheme.bodyText1.copyWith(
-                                  color: tertiaryColor,
+                                header: Padding(
+                                  padding: EdgeInsets.all(paddingMid),
+                                  child: Text(
+                                    guideContent.name,
+                                    style: _theme.textTheme.headline3.copyWith(
+                                      fontSize: 18,
+                                      color: accentColor,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                              expanded: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Padding(
-                                    padding:
-                                        EdgeInsets.only(bottom: paddingMid),
-                                    child: Text(
-                                      widget.guide.description,
-                                      softWrap: true,
-                                      overflow: TextOverflow.fade,
-                                      style:
-                                          _theme.textTheme.bodyText1.copyWith(
-                                        color: tertiaryColor,
+                                collapsed: Text(
+                                  guideContent.description,
+                                  softWrap: true,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: _theme.textTheme.bodyText1.copyWith(
+                                    color: accentColor,
+                                  ),
+                                ),
+                                expanded: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Padding(
+                                      padding:
+                                          EdgeInsets.only(bottom: paddingMid),
+                                      child: Text(
+                                        guideContent.description,
+                                        softWrap: true,
+                                        overflow: TextOverflow.fade,
+                                        style:
+                                            _theme.textTheme.bodyText1.copyWith(
+                                          color: accentColor,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              builder: (_, collapsed, expanded) {
-                                return Padding(
-                                  padding: EdgeInsets.only(
-                                    left: paddingMid,
-                                    right: paddingMid,
-                                    bottom: paddingMid,
-                                  ),
-                                  child: Expandable(
-                                    collapsed: collapsed,
-                                    expanded: expanded,
-                                    theme: const ExpandableThemeData(
-                                      crossFadePoint: 0,
+                                  ],
+                                ),
+                                builder: (_, collapsed, expanded) {
+                                  return Padding(
+                                    padding: EdgeInsets.only(
+                                      left: paddingMid,
+                                      right: paddingMid,
+                                      bottom: paddingMid,
                                     ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  ExpandableNotifier(
-                    child: Card(
-                      clipBehavior: Clip.antiAlias,
-                      child: Column(
-                        children: <Widget>[
-                          SizedBox(
-                            height: 150,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.orange,
-                                shape: BoxShape.rectangle,
-                              ),
-                            ),
-                          ),
-                          ScrollOnExpand(
-                            scrollOnExpand: true,
-                            scrollOnCollapse: false,
-                            child: ExpandablePanel(
-                              theme: const ExpandableThemeData(
-                                headerAlignment:
-                                    ExpandablePanelHeaderAlignment.center,
-                                tapBodyToCollapse: true,
-                              ),
-                              header: Padding(
-                                padding: EdgeInsets.all(paddingMid),
-                                child: Text(
-                                  "ExpandablePanel",
-                                  style: _theme.textTheme.headline3
-                                      .copyWith(fontSize: 18),
-                                ),
-                              ),
-                              collapsed: Text(
-                                widget.guide.description,
-                                softWrap: true,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: _theme.textTheme.bodyText1.copyWith(
-                                  color: tertiaryColor,
-                                ),
-                              ),
-                              expanded: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Padding(
-                                    padding:
-                                        EdgeInsets.only(bottom: paddingMid),
-                                    child: Text(
-                                      widget.guide.description,
-                                      softWrap: true,
-                                      overflow: TextOverflow.fade,
-                                      style:
-                                          _theme.textTheme.bodyText1.copyWith(
-                                        color: tertiaryColor,
+                                    child: Expandable(
+                                      collapsed: collapsed,
+                                      expanded: expanded,
+                                      theme: const ExpandableThemeData(
+                                        crossFadePoint: 0,
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  );
+                                },
                               ),
-                              builder: (_, collapsed, expanded) {
-                                return Padding(
-                                  padding: EdgeInsets.only(
-                                    left: paddingMid,
-                                    right: paddingMid,
-                                    bottom: paddingMid,
-                                  ),
-                                  child: Expandable(
-                                    collapsed: collapsed,
-                                    expanded: expanded,
-                                    theme: const ExpandableThemeData(
-                                      crossFadePoint: 0,
-                                    ),
-                                  ),
-                                );
-                              },
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  )
                 ],
               ),
             ),

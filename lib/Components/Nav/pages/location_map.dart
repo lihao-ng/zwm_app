@@ -443,7 +443,7 @@ class _LocationMapState extends State<LocationMap> {
               label: 'Search by Product',
               labelStyle: _theme.textTheme.bodyText1
                   .copyWith(fontWeight: FontWeight.bold),
-              onTap: () => print('SECOND CHILD'),
+              onTap: () => Navigator.pushNamed(context, '/product-search'),
             ),
             SpeedDialChild(
               child: Icon(

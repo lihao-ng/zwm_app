@@ -1,26 +1,31 @@
 import 'package:http/http.dart' as Http;
 
 import 'package:zwm_app/Models/Auth.dart';
-import 'package:zwm_app/Models/Good.dart';
+import 'package:zwm_app/Models/Product.dart';
 
 import 'package:zwm_app/Services/Services.dart';
 
-class GoodServices extends Services {
+class ProductServices extends Services {
   index({
-    int id,
+    String search,
+    int limit,
     Function onSuccess,
     Function onError,
   }) {
     Auth.getInstance(onInstance: (Auth auth) {
       HEADERS["Authorization"] = "Bearer ${auth.accessToken}";
 
-      Http.get("$HOST/products/$id", headers: HEADERS).then((response) {
+      Http.get("$HOST/products/search?limit=$limit&search=$search",
+              headers: HEADERS)
+          .then((response) {
         Services.handle(
           response: response,
           valid: (responseBody) {
-            Good good = Good.fromJson(responseBody);
+            Iterable responseItems = responseBody;
+            List<Product> products =
+                responseItems.map((item) => Product.fromJson(item)).toList();
 
-            onSuccess(good);
+            onSuccess(products);
           },
           invalid: (message) {
             onError(message);

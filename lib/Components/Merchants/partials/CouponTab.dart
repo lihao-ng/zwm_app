@@ -17,7 +17,9 @@ class CouponTabState extends State<CouponTab> {
   Widget build(BuildContext context) {
     final _theme = Theme.of(context);
 
-    return Padding(
+    return Container(
+      color: accentColor,
+      margin: EdgeInsets.only(bottom: spacingSmall),
       padding: EdgeInsets.all(paddingMid),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -44,6 +46,12 @@ class CouponTabState extends State<CouponTab> {
                 ),
                 child: Container(
                   width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: accentColor,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(5),
+                    ),
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
@@ -91,8 +99,6 @@ class CouponTabState extends State<CouponTab> {
               );
             }).toList(),
           ),
-          SizedBox(height: spacingMid),
-          Container(height: spacingSmall, color: Colors.grey[200]),
         ],
       ),
     );
