@@ -43,6 +43,30 @@ class MerchantServices extends Services {
     });
   }
 
+  show({
+    int id,
+    Function onSuccess,
+    Function onError,
+  }) {
+    Auth.getInstance(onInstance: (Auth auth) {
+      HEADERS["Authorization"] = "Bearer ${auth.accessToken}";
+
+      Http.get("$HOST/merchants/$id", headers: HEADERS).then((response) {
+        Services.handle(
+          response: response,
+          valid: (responseBody) {
+            Merchant merchant = Merchant.fromJson(responseBody);
+
+            onSuccess(merchant);
+          },
+          invalid: (message) {
+            onError(message);
+          },
+        );
+      });
+    });
+  }
+
   nearby({
     double lat,
     double lng,

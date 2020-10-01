@@ -168,6 +168,18 @@ class Routes {
           settings: settings,
         );
         break;
+      case '/product-detail':
+        ProductDetail productDetail = settings.arguments;
+
+        return PageTransition(
+          child: ProductDetail(
+            product: productDetail.product,
+            redirect: productDetail.redirect,
+          ),
+          type: PageTransitionType.fade,
+          settings: settings,
+        );
+        break;
 
       default:
         return null;

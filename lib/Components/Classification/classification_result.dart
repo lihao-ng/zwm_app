@@ -115,8 +115,9 @@ class _ClassificationResult extends State<ClassificationResult> {
           return;
         }
 
-        Keys.navKey.currentState.pushReplacementNamed(
+        Keys.navKey.currentState.pushNamedAndRemoveUntil(
           '/guide-detail',
+          (Route<dynamic> route) => false,
           arguments: guides[0],
         );
       },

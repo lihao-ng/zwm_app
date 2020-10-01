@@ -170,6 +170,7 @@ class _MerchantDetailState extends State<MerchantDetail>
                       child: Icon(Icons.arrow_back, color: primaryColor),
                       onTap: () => Navigator.of(context).pop(),
                     ),
+                    SizedBox(width: spacingMin),
                     Expanded(
                       child: Center(
                         child: Text(
@@ -283,10 +284,10 @@ class _MerchantDetailState extends State<MerchantDetail>
             SliverList(
               delegate: SliverChildListDelegate(
                 [
-                  SizedBox(height: spacingSmall),
                   _wrapScrollTag(
                     index: 0,
                     child: Container(
+                      color: accentColor,
                       padding: EdgeInsets.all(paddingMid),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:transparent_image/transparent_image.dart';
-import 'package:zwm_app/Components/Guides/partials/GuideCard.dart';
 
 import 'package:zwm_app/Components/Widgets/AppBar.dart';
 import 'package:zwm_app/Models/Product.dart';
 import 'package:zwm_app/Services/ProductServices.dart';
 import 'package:zwm_app/constants.dart';
+import 'package:zwm_app/screens.dart';
 import 'package:zwm_app/utils.dart';
 
 class ProductSearch extends StatefulWidget {
@@ -81,7 +81,6 @@ class _ProductSearchState extends State<ProductSearch> {
             ),
             SizedBox(height: spacingSmall),
             TextField(
-              autofocus: true,
               controller: searchController,
               onChanged: (value) {
                 _filterSearchResults(value);
@@ -131,11 +130,14 @@ class _ProductSearchState extends State<ProductSearch> {
                             children: _products.map((Product product) {
                               return GestureDetector(
                                 onTap: () => {
-                                  // Navigator.pushNamed(
-                                  //   context,
-                                  //   '/product-detail',
-                                  //   arguments: product,
-                                  // ),
+                                  Navigator.pushNamed(
+                                    context,
+                                    '/product-detail',
+                                    arguments: ProductDetail(
+                                      product: product,
+                                      redirect: true,
+                                    ),
+                                  ),
                                 },
                                 child: Container(
                                   width: double.infinity,

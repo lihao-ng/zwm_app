@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:transparent_image/transparent_image.dart';
+import 'package:zwm_app/Components/Products/product_detail.dart';
 import 'package:zwm_app/Models/Product.dart';
 import 'package:zwm_app/constants.dart';
 
@@ -17,7 +18,10 @@ class ProductTabState extends State<ProductTab> {
   Widget build(BuildContext context) {
     final _theme = Theme.of(context);
 
-    return Padding(
+    return Container(
+      color: accentColor,
+      width: double.infinity,
+      margin: EdgeInsets.only(bottom: spacingSmall),
       padding: EdgeInsets.all(paddingMid),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -34,6 +38,7 @@ class ProductTabState extends State<ProductTab> {
                   'No items for now',
                   style: _theme.textTheme.bodyText1.copyWith(
                     fontWeight: FontWeight.bold,
+                    color: tertiaryColor,
                   ),
                 )
               : GridView.count(
@@ -44,9 +49,20 @@ class ProductTabState extends State<ProductTab> {
                   crossAxisSpacing: paddingLarge,
                   children: widget.products.map<Widget>((Product product) {
                     return GestureDetector(
-                      // onTap: press,
+                      onTap: () => Navigator.pushNamed(
+                        context,
+                        '/product-detail',
+                        arguments: ProductDetail(product: product),
+                      ),
                       child: Container(
                         width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: accentColor,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(5),
+                          ),
+                        ),
+                        clipBehavior: Clip.antiAlias,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
@@ -96,8 +112,8 @@ class ProductTabState extends State<ProductTab> {
                     );
                   }).toList(),
                 ),
-          SizedBox(height: spacingMid),
-          Container(height: spacingSmall, color: Colors.grey[200]),
+          // SizedBox(height: spacingMid),
+          // Container(height: spacingSmall, color: Colors.grey[200]),
         ],
       ),
     );
