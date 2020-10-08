@@ -114,7 +114,7 @@ class _ProductSearchState extends State<ProductSearch> {
                   : _products.length == 0
                       ? Center(
                           child: Text(
-                            'No results found.',
+                            'No results found',
                             style: _theme.textTheme.headline3,
                           ),
                         )

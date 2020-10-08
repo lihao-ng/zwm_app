@@ -209,7 +209,7 @@ class _LocationMapState extends State<LocationMap> {
           setState(() {
             _merchants.clear();
             _merchants.add(
-              Merchant(name: 'No results found.', category: '-', photo: ''),
+              Merchant(name: 'No results found', category: '-', photo: ''),
             );
           });
 

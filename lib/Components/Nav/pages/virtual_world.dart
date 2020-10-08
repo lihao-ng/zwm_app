@@ -6,6 +6,7 @@ import 'package:zwm_app/Animations/FadeAnimation.dart';
 import 'package:zwm_app/Components/Widgets/AppBar.dart';
 import 'package:zwm_app/Services/AuthServices.dart';
 import 'package:zwm_app/constants.dart';
+import 'package:zwm_app/utils.dart';
 
 class VirtualWorld extends StatefulWidget {
   VirtualWorld({Key key}) : super(key: key);
@@ -43,7 +44,13 @@ class _VirtualWorldState extends State<VirtualWorld> {
           }
         });
       },
-      onError: () {},
+      onError: (response) {
+        errorAlert(
+          context,
+          title: "An error has occured!",
+          body: response,
+        );
+      },
     );
   }
 

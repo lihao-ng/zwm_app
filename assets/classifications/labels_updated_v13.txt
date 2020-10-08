@@ -1,0 +1,10 @@
+0 Bubble wrap
+1 Auminium can
+2 Cardboard
+3 Disposable p...
+4 Electronics
+5 Glass
+6 Paper
+7 Plastic bag
+8 Plastic hous...
+9 Styrofoam fo...
