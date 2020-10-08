@@ -133,7 +133,7 @@ class _GuideSearchState extends State<GuideSearch> {
                   : _guides.length == 0
                       ? Center(
                           child: Text(
-                            'No results found.',
+                            'No results found',
                             style: _theme.textTheme.headline3,
                           ),
                         )

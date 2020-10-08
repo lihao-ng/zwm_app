@@ -142,7 +142,7 @@ class _ClassificationResult extends State<ClassificationResult> {
       body: Stack(
         children: [
           Positioned(
-            bottom: 0,
+            top: 0,
             child: SizedBox(
               width: _size.width,
               child: Image.file(
@@ -186,9 +186,12 @@ class _ClassificationResult extends State<ClassificationResult> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            widget.classifications[0].label,
-                            style: _theme.textTheme.headline3,
+                          Expanded(
+                            child: Text(
+                              widget.classifications[0].label,
+                              style: _theme.textTheme.headline3,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
                           GestureDetector(
                             onTap: () => _showResultsDialog(),

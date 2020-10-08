@@ -51,7 +51,7 @@ class _HomeState extends State<Home> {
           _currentPoints = currentPoints;
         });
       },
-      onError: () {},
+      onError: (error) {},
     );
 
     Auth.getInstance(onInstance: (Auth auth) {
@@ -69,7 +69,10 @@ class _HomeState extends State<Home> {
       limit: 6,
       page: 1,
       onSuccess: (List<Offer> offers, page) {
-        _offersLoading = false;
+        setState(() {
+          _offersLoading = false;
+        });
+
         if (offers.length == 0) {
           return;
         }
@@ -79,7 +82,9 @@ class _HomeState extends State<Home> {
         });
       },
       onError: (response) {
-        _offersLoading = false;
+        setState(() {
+          _offersLoading = false;
+        });
 
         errorAlert(
           context,
@@ -97,7 +102,10 @@ class _HomeState extends State<Home> {
       limit: 6,
       page: 1,
       onSuccess: (List<Merchant> merchants, page) {
-        _merchantsLoading = false;
+        setState(() {
+          _merchantsLoading = false;
+        });
+
         if (merchants.length == 0) {
           return;
         }
@@ -106,9 +114,10 @@ class _HomeState extends State<Home> {
         });
       },
       onError: (response) {
-        _merchantsLoading = false;
+        setState(() {
+          _merchantsLoading = false;
+        });
 
-        Navigator.of(context).pop();
         errorAlert(
           context,
           title: "An error has occured!",
@@ -186,7 +195,7 @@ class _HomeState extends State<Home> {
                   : _offers.length == 0
                       ? Center(
                           child: Text(
-                            'No results found.',
+                            'No results found',
                             style: _theme.textTheme.headline3,
                           ),
                         )
@@ -274,7 +283,7 @@ class _HomeState extends State<Home> {
                   : _merchants.length == 0
                       ? Center(
                           child: Text(
-                            'No results found.',
+                            'No results found',
                             style: _theme.textTheme.headline3,
                           ),
                         )

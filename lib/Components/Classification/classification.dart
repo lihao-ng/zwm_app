@@ -88,8 +88,8 @@ class _ClassificationState extends State<Classification> {
 
   loadModel() async {
     await Tflite.loadModel(
-      model: "assets/classifications/model.tflite",
-      labels: "assets/classifications/labels.txt",
+      model: "assets/classifications/model_updated_v14.tflite",
+      labels: "assets/classifications/labels_updated_v14.txt",
     );
   }
 
