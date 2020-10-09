@@ -19,6 +19,8 @@ class _CouponsListState extends State<CouponsList> {
 
   List<Offer> _offers = [];
   int _page = 1;
+  bool _offersLoading = true;
+  bool _noOffers = false;
 
   ScrollController _scrollController = new ScrollController();
   final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
@@ -43,18 +45,31 @@ class _CouponsListState extends State<CouponsList> {
   }
 
   void _loadCoupons() {
+    _offersLoading = true;
+
     OfferServices().index(
       type: 'Promo',
       page: _page,
       onSuccess: (List<Offer> offers, page) {
+        if (!mounted) return;
+
+        setState(() {
+          _offersLoading = false;
+        });
+
         if (offers.length == 0) {
+          setState(() {
+            _noOffers = true;
+          });
           return;
         }
+
         setState(() {
           _page = page + 1;
         });
 
         var future = Future(() {});
+
         for (var i = 0; i < offers.length; i++) {
           future = future.then((_) {
             return Future.delayed(Duration(milliseconds: 100), () {
@@ -67,7 +82,12 @@ class _CouponsListState extends State<CouponsList> {
         }
       },
       onError: (response) {
-        Navigator.of(context).pop();
+        if (!mounted) return;
+
+        setState(() {
+          _offersLoading = false;
+        });
+
         errorAlert(
           context,
           title: "An error has occured!",
@@ -96,12 +116,21 @@ class _CouponsListState extends State<CouponsList> {
               ),
             ),
             SizedBox(height: spacingSmall),
-            if (_offers.length == 0)
+            if (_offersLoading == true)
               Expanded(
                 child: Center(
                   child: SpinKitPouringHourglass(
                     color: Theme.of(context).primaryColor,
                     size: 50.0,
+                  ),
+                ),
+              ),
+            if (_noOffers == true)
+              Expanded(
+                child: Center(
+                  child: Text(
+                    'No results found',
+                    style: _theme.textTheme.headline3,
                   ),
                 ),
               ),

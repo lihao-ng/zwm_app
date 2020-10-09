@@ -58,7 +58,7 @@ class _LocationMapState extends State<LocationMap> {
     reverseAnimationCurve: Curves.decelerate,
     forwardAnimationCurve: Curves.easeIn,
     icon: Icon(Icons.info, color: primaryColor),
-    duration: Duration(seconds: 4),
+    duration: Duration(seconds: 3),
     isDismissible: false,
     leftBarIndicatorColor: primaryColor,
   );
@@ -74,6 +74,8 @@ class _LocationMapState extends State<LocationMap> {
   }
 
   void _updateMarkers(Set<Marker> markers) {
+    if (!mounted) return;
+
     setState(() {
       _markers = markers;
     });
@@ -91,6 +93,8 @@ class _LocationMapState extends State<LocationMap> {
       search: '',
       limit: 800,
       onSuccess: (List<Merchant> merchants, page) async {
+        if (!mounted) return;
+
         if (merchants.length == 0) {
           return;
         }
@@ -130,6 +134,8 @@ class _LocationMapState extends State<LocationMap> {
       lat: lat,
       lng: lng,
       onSuccess: (List<Merchant> merchants) async {
+        if (!mounted) return;
+
         if (merchants.length == 0) {
           return;
         }
@@ -162,7 +168,6 @@ class _LocationMapState extends State<LocationMap> {
     final givenPermission = await _locationServices.locationPermission();
 
     if (givenPermission == false) {
-      print('Not given');
       errorAlert(
         context,
         title: "An error has occured!",
@@ -205,6 +210,8 @@ class _LocationMapState extends State<LocationMap> {
       categories: _selectedCategories,
       search: query,
       onSuccess: (List<Merchant> merchants, page) async {
+        if (!mounted) return;
+
         if (merchants.length == 0) {
           setState(() {
             _merchants.clear();
@@ -385,7 +392,7 @@ class _LocationMapState extends State<LocationMap> {
                               backgroundImage: _merchants[index].photo != ""
                                   ? NetworkImage(_merchants[index].photo)
                                   : AssetImage(
-                                      'assets/images/categories/bulk.jpg',
+                                      'assets/images/home.jpg',
                                     ),
                             ),
                             title: Text(

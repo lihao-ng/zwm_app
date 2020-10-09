@@ -1,9 +1,10 @@
 class GuideCategory {
-  final String image, title, value;
+  final String image, title, value, icon;
 
   GuideCategory({
     this.image,
     this.value,
+    this.icon,
     this.title,
   });
 }
@@ -12,41 +13,49 @@ List<GuideCategory> guideCategories = [
   GuideCategory(
     title: "Plastic",
     value: "Plastic",
-    image: "assets/images/categories/bulk.jpg",
+    icon: "assets/images/guide_categories_icons/plastic.png",
+    image: "assets/images/guide_categories/plastic.jpg",
   ),
   GuideCategory(
     title: "Metal",
     value: "Metal",
-    image: "assets/images/categories/bookstore.jpg",
+    icon: "assets/images/guide_categories_icons/metal.png",
+    image: "assets/images/guide_categories/metal.jpg",
   ),
   GuideCategory(
     title: "Glass",
     value: "Glass",
-    image: "assets/images/categories/composting.jpg",
+    icon: "assets/images/guide_categories_icons/glass.png",
+    image: "assets/images/guide_categories/glass.jpg",
   ),
   GuideCategory(
     title: "Paper",
     value: "Paper",
-    image: "assets/images/categories/household.jpg",
+    icon: "assets/images/guide_categories_icons/paper.png",
+    image: "assets/images/guide_categories/paper.jpg",
   ),
   GuideCategory(
     title: "Electronics",
     value: "Electronics",
-    image: "assets/images/categories/furry.jpg",
+    icon: "assets/images/guide_categories_icons/electronics.png",
+    image: "assets/images/guide_categories/electronics.jpg",
   ),
   GuideCategory(
     title: "Fabric",
     value: "Fabric",
-    image: "assets/images/categories/repair_services.jpg",
+    icon: "assets/images/guide_categories_icons/fabric.png",
+    image: "assets/images/guide_categories/fabric.jpg",
   ),
   GuideCategory(
     title: "Households",
     value: "Households",
-    image: "assets/images/categories/repair_services.jpg",
+    icon: "assets/images/guide_categories_icons/households.png",
+    image: "assets/images/guide_categories/households.jpg",
   ),
   GuideCategory(
     title: "Hazardous",
     value: "Hazardous",
-    image: "assets/images/categories/personal_product.jpg",
+    icon: "assets/images/guide_categories_icons/hazardous.png",
+    image: "assets/images/guide_categories/hazardous.jpg",
   ),
 ];

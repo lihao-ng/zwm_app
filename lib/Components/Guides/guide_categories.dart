@@ -78,9 +78,11 @@ class _GuideCategoriesState extends State<GuideCategories> {
                           maxLines: 2,
                         ),
                         backgroundColor: Colors.black45,
-                        leading: Icon(
-                          Icons.ac_unit,
+                        leading: Image.asset(
+                          guideCategory.icon,
                           color: Colors.white,
+                          width: 30,
+                          height: 30,
                         ),
                       ),
                       child: Image.asset(

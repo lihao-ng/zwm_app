@@ -45,7 +45,7 @@ class AcceptingItemsTabState extends State<AcceptingItemsTab> {
                         borderRadius: BorderRadius.circular(5),
                         child: Image.asset(
                           offer.photo,
-                          fit: BoxFit.fill,
+                          fit: BoxFit.cover,
                           width: double.infinity,
                           height: 140,
                         ),

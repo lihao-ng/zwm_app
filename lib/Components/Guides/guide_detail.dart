@@ -16,6 +16,70 @@ class GuideDetail extends StatefulWidget {
 }
 
 class _GuideDetailState extends State<GuideDetail> {
+  _switchImage(name) {
+    var color = '';
+
+    switch (name) {
+      case 'Reuse':
+        color = 'assets/images/guide_placeholders/reuse.jpg';
+        break;
+
+      case 'Recycle':
+        color = 'assets/images/guide_placeholders/recycle.jpg';
+        break;
+
+      case 'Drop-off':
+        color = 'assets/images/categories/recycling_centre.jpg';
+        break;
+
+      case 'DIY Compost':
+        color = 'assets/images/categories/composting.jpg';
+        break;
+
+      case 'Landfill':
+        color = 'assets/images/guide_placeholders/landfill.jpg';
+        break;
+
+      default:
+        color = 'assets/images/guide_placeholders/reduce.jpg';
+        break;
+    }
+
+    return color;
+  }
+
+  _switchColor(name) {
+    var color;
+
+    switch (name) {
+      case 'Reuse':
+        color = Colors.green[500];
+        break;
+
+      case 'Recycle':
+        color = Colors.green[800];
+        break;
+
+      case 'Drop-off':
+        color = Colors.yellow[900];
+        break;
+
+      case 'DIY Compost':
+        color = Colors.greenAccent[700];
+        break;
+
+      case 'Landfill':
+        color = Colors.grey[600];
+        break;
+
+      default:
+        color = primaryColor;
+        break;
+    }
+
+    return color;
+  }
+
   @override
   Widget build(BuildContext context) {
     final _theme = Theme.of(context);
@@ -37,7 +101,6 @@ class _GuideDetailState extends State<GuideDetail> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // SizedBox(width: spacingMid),
                   Icon(
                     widget.guide.recyclable == 'Recyclable'
                         ? Icons.check
@@ -97,10 +160,7 @@ class _GuideDetailState extends State<GuideDetail> {
                               5.0,
                             ),
                           ),
-                          color: guideContent.name == 'Reuse' ||
-                                  guideContent.name == 'Reduce'
-                              ? primaryColor
-                              : Colors.yellow[900],
+                          color: _switchColor(guideContent.name),
                         ),
                         margin: EdgeInsets.only(bottom: spacingMid),
                         clipBehavior: Clip.antiAlias,
@@ -110,7 +170,7 @@ class _GuideDetailState extends State<GuideDetail> {
                               height: 150,
                               width: double.infinity,
                               child: Image.asset(
-                                'assets/images/categories/recycling_centre.jpg',
+                                _switchImage(guideContent.name),
                                 fit: BoxFit.cover,
                               ),
                             ),

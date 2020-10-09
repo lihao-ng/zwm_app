@@ -37,7 +37,7 @@ class CouponCard extends StatelessWidget {
                   FadeInImage.memoryNetwork(
                     placeholder: kTransparentImage,
                     image: offer.photo,
-                    fit: BoxFit.fill,
+                    fit: BoxFit.cover,
                     width: double.infinity,
                     height: 180,
                   ),

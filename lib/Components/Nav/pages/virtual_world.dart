@@ -28,19 +28,21 @@ class _VirtualWorldState extends State<VirtualWorld> {
   _loadAccount() {
     AuthServices().updatePoints(
       onSuccess: (totalPoints, currentPoints) {
+        if (!mounted) return;
+
         setState(() {
           _totalPoints = totalPoints;
 
           if (_totalPoints < 1000) {
             _currentPoints = _totalPoints;
-            _flareFile = 'assets/images/girl_walking.flr';
+            _flareFile = 'assets/images/flare/girl_walking.flr';
           } else if (_totalPoints >= 1000 && _totalPoints < 2000) {
             _currentPoints = _totalPoints - 1000;
             _startValue = 1000;
             _endValue = 2000;
-            _flareFile = 'assets/images/girl_walking_2.flr';
+            _flareFile = 'assets/images/flare/girl_walking_2.flr';
           } else if (_totalPoints >= 2000) {
-            _flareFile = 'assets/images/girl_walking_3.flr';
+            _flareFile = 'assets/images/flare/girl_walking_3.flr';
           }
         });
       },

@@ -38,7 +38,7 @@ class MerchantCard extends StatelessWidget {
                       height: 280,
                     )
                   : Image.asset(
-                      'assets/images/categories/bulk.jpg',
+                      'assets/images/home.jpg',
                       fit: BoxFit.fill,
                       width: _size.width,
                       height: 280,
@@ -62,6 +62,7 @@ class MerchantCard extends StatelessWidget {
                       child: Text(
                         'Address: ${merchant.address}',
                         overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
                         style: _theme.textTheme.caption,
                       ),
                     ),
@@ -70,6 +71,7 @@ class MerchantCard extends StatelessWidget {
                       child: Text(
                         'Category: ${merchant.category}',
                         overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
                         style: _theme.textTheme.caption,
                       ),
                     ),
@@ -78,6 +80,7 @@ class MerchantCard extends StatelessWidget {
                       child: Text(
                         'Contact: ${merchant.contact}',
                         overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
                         style: _theme.textTheme.caption,
                       ),
                     ),

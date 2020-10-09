@@ -77,9 +77,15 @@ flutter:
   assets:
     - .env
     - assets/images/
+    - assets/images/errors/
+    - assets/images/flare/
+    - assets/classifications/
     - assets/images/map_icons/
     - assets/images/categories/
-    - assets/classifications/
+    - assets/images/categories_icons/
+    - assets/images/guide_categories/
+    - assets/images/guide_categories_icons/
+    - assets/images/guide_placeholders/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

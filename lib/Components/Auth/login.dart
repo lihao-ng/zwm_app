@@ -67,7 +67,7 @@ class _LoginState extends State<Login> {
                     height: 0.35 * _size.height,
                     width: double.infinity,
                     child: Image.asset(
-                      'assets/images/background4.jpg',
+                      'assets/images/login.jpg',
                       fit: BoxFit.cover,
                     ),
                   ),

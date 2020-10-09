@@ -36,6 +36,7 @@ class MerchantServices extends Services {
             onSuccess(merchants, responseBody['current_page']);
           },
           invalid: (message) {
+            print(message);
             onError(message);
           },
         );
@@ -74,7 +75,11 @@ class MerchantServices extends Services {
     Function onSuccess,
     Function onError,
   }) {
-    var body = jsonEncode({"lat": lat, "lng": lng, "categories": categories});
+    var body = jsonEncode({
+      "lat": lat,
+      "lng": lng,
+      "categories": categories,
+    });
 
     Auth.getInstance(onInstance: (Auth auth) {
       HEADERS["Authorization"] = "Bearer ${auth.accessToken}";
@@ -90,6 +95,7 @@ class MerchantServices extends Services {
             onSuccess(merchants);
           },
           invalid: (message) {
+            print('err :' + message);
             onError(message);
           },
         );

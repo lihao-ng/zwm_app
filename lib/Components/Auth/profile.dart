@@ -42,6 +42,8 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
 
   _loadAccount() {
     Auth.getInstance(onInstance: (Auth auth) {
+      if (!mounted) return;
+
       setState(() {
         _auth = auth;
       });
@@ -55,6 +57,8 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
     _tabController = new TabController(length: 2, vsync: this);
 
     _tabController.addListener(() {
+      if (!mounted) return;
+
       setState(() {
         if (_tabController.index == 0) {
           _height = MediaQuery.of(context).size.height / 2;
@@ -218,7 +222,7 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                             child: CircleAvatar(
                               radius: 40,
                               backgroundImage: AssetImage(
-                                'assets/images/home_bg.jpg',
+                                'assets/images/home.jpg',
                               ),
                             ),
                           ),

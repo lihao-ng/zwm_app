@@ -81,7 +81,7 @@ class MerchantCard extends StatelessWidget {
                       width: 150,
                     )
                   : Image.asset(
-                      'assets/images/categories/bulk.jpg',
+                      'assets/images/home.jpg',
                       fit: BoxFit.fill,
                       width: 150,
                     ),

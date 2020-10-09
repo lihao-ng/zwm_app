@@ -65,7 +65,7 @@ Future<void> errorAlert(BuildContext context, {title, body}) async {
                 child: CircleAvatar(
                   radius: 40,
                   backgroundImage: AssetImage(
-                    'assets/images/error.png',
+                    'assets/images/errors/error.png',
                   ),
                 ),
               )
