@@ -63,7 +63,7 @@ class _ProductDetailState extends State<ProductDetail> {
               FadeInImage.memoryNetwork(
                 placeholder: kTransparentImage,
                 image: widget.product.photo,
-                fit: BoxFit.fill,
+                fit: BoxFit.cover,
                 width: double.infinity,
                 height: 200,
               ),

@@ -60,7 +60,7 @@ class CouponTabState extends State<CouponTab> {
                         child: FadeInImage.memoryNetwork(
                           placeholder: kTransparentImage,
                           image: offer.photo,
-                          fit: BoxFit.fill,
+                          fit: BoxFit.cover,
                           width: double.infinity,
                           height: 140,
                         ),

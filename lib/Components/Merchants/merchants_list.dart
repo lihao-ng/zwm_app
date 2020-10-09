@@ -21,6 +21,7 @@ class MerchantsList extends StatefulWidget {
 class _MerchantsListState extends State<MerchantsList> {
   List<Merchant> _merchants = [];
   int _page = 1;
+  bool _merchantsLoading = true;
 
   ScrollController _scrollController = new ScrollController();
 
@@ -49,9 +50,14 @@ class _MerchantsListState extends State<MerchantsList> {
       categories: [widget.category.value],
       page: _page,
       onSuccess: (List<Merchant> merchants, page) {
+        setState(() {
+          _merchantsLoading = false;
+        });
+
         if (merchants.length == 0) {
           return;
         }
+
         setState(() {
           _page = page + 1;
           _merchants.addAll(merchants);
@@ -91,31 +97,40 @@ class _MerchantsListState extends State<MerchantsList> {
             ),
             SizedBox(height: spacingSmall),
             Expanded(
-              child: _merchants.length == 0
+              child: _merchantsLoading == true
                   ? Center(
                       child: SpinKitPouringHourglass(
                         color: Theme.of(context).primaryColor,
                         size: 50.0,
                       ),
                     )
-                  : ListView.separated(
-                      controller: _scrollController,
-                      itemCount: _merchants.length,
-                      separatorBuilder: (BuildContext context, int index) =>
-                          Divider(
-                        height: spacingMid,
-                        thickness: 2,
-                      ),
-                      itemBuilder: (context, index) {
-                        return MerchantCard(
-                          merchant: _merchants[index],
-                          press: () => {
-                            Navigator.pushNamed(context, '/merchant-detail',
-                                arguments: _merchants[index]),
+                  : _merchants.length == 0
+                      ? Expanded(
+                          child: Center(
+                            child: Text(
+                              'No results found',
+                              style: _theme.textTheme.headline3,
+                            ),
+                          ),
+                        )
+                      : ListView.separated(
+                          controller: _scrollController,
+                          itemCount: _merchants.length,
+                          separatorBuilder: (BuildContext context, int index) =>
+                              Divider(
+                            height: spacingMid,
+                            thickness: 2,
+                          ),
+                          itemBuilder: (context, index) {
+                            return MerchantCard(
+                              merchant: _merchants[index],
+                              press: () => {
+                                Navigator.pushNamed(context, '/merchant-detail',
+                                    arguments: _merchants[index]),
+                              },
+                            );
                           },
-                        );
-                      },
-                    ),
+                        ),
             ),
           ],
         ),

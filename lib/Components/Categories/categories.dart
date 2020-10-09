@@ -53,9 +53,11 @@ class _CategoriesState extends State<Categories> {
                           maxLines: 2,
                         ),
                         backgroundColor: Colors.black45,
-                        leading: Icon(
-                          Icons.ac_unit,
+                        leading: Image.asset(
+                          category.icon,
                           color: Colors.white,
+                          width: 30,
+                          height: 30,
                         ),
                       ),
                       child: Image.asset(

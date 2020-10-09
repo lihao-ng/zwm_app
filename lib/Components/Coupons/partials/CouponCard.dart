@@ -47,14 +47,15 @@ class CouponCard extends StatelessWidget {
                   child: FadeInImage.memoryNetwork(
                     placeholder: kTransparentImage,
                     image: offer.photo,
-                    fit: BoxFit.fill,
+                    fit: BoxFit.cover,
+                    height: 100,
                     width: 150,
                   ),
                 ),
                 Expanded(
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(
-                        paddingMid, paddingSmall, 0, paddingSmall),
+                        paddingMid, paddingSmall, paddingSmall, paddingSmall),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,7 +69,7 @@ class CouponCard extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                         Text(
-                          'Nude Zero Waste Store',
+                          offer.type,
                           style: _theme.textTheme.caption,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,

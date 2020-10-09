@@ -22,7 +22,7 @@ class GuideCard extends StatelessWidget {
       onTap: press,
       child: Container(
         width: _size.width,
-        height: 40,
+        height: 55,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -31,7 +31,7 @@ class GuideCard extends StatelessWidget {
               backgroundImage: guide.photo != ""
                   ? NetworkImage(guide.photo)
                   : AssetImage(
-                      'assets/images/categories/bulk.jpg',
+                      'assets/images/home.jpg',
                     ),
             ),
             SizedBox(width: spacingMid),

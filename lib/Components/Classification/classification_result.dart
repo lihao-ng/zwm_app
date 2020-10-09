@@ -104,8 +104,9 @@ class _ClassificationResult extends State<ClassificationResult> {
       page: 1,
       limit: 1,
       onSuccess: (List<Guide> guides, page) {
+        Navigator.of(context).pop();
+
         if (guides.length == 0) {
-          Navigator.of(context).pop();
           errorAlert(
             context,
             title: "An error has occured!",
@@ -115,9 +116,8 @@ class _ClassificationResult extends State<ClassificationResult> {
           return;
         }
 
-        Keys.navKey.currentState.pushNamedAndRemoveUntil(
+        Keys.navKey.currentState.pushReplacementNamed(
           '/guide-detail',
-          (Route<dynamic> route) => false,
           arguments: guides[0],
         );
       },

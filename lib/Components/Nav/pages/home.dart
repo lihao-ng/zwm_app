@@ -47,6 +47,8 @@ class _HomeState extends State<Home> {
   _loadAccount() {
     AuthServices().updatePoints(
       onSuccess: (totalPoints, currentPoints) {
+        if (!mounted) return;
+
         setState(() {
           _currentPoints = currentPoints;
         });
@@ -55,6 +57,8 @@ class _HomeState extends State<Home> {
     );
 
     Auth.getInstance(onInstance: (Auth auth) {
+      if (!mounted) return;
+
       setState(() {
         _auth = auth;
       });
@@ -69,6 +73,8 @@ class _HomeState extends State<Home> {
       limit: 6,
       page: 1,
       onSuccess: (List<Offer> offers, page) {
+        if (!mounted) return;
+
         setState(() {
           _offersLoading = false;
         });
@@ -82,6 +88,8 @@ class _HomeState extends State<Home> {
         });
       },
       onError: (response) {
+        if (!mounted) return;
+
         setState(() {
           _offersLoading = false;
         });
@@ -102,6 +110,8 @@ class _HomeState extends State<Home> {
       limit: 6,
       page: 1,
       onSuccess: (List<Merchant> merchants, page) {
+        if (!mounted) return;
+
         setState(() {
           _merchantsLoading = false;
         });
@@ -109,11 +119,14 @@ class _HomeState extends State<Home> {
         if (merchants.length == 0) {
           return;
         }
+
         setState(() {
           _merchants.addAll(merchants);
         });
       },
       onError: (response) {
+        if (!mounted) return;
+
         setState(() {
           _merchantsLoading = false;
         });
@@ -349,7 +362,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
           width: double.infinity,
           color: _theme.primaryColor,
           child: Image.asset(
-            'assets/images/home_bg.jpg',
+            'assets/images/home.jpg',
             fit: BoxFit.cover,
           ),
         ),

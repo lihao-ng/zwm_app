@@ -79,7 +79,7 @@ class _CouponDetailState extends State<CouponDetail> {
                     FadeInImage.memoryNetwork(
                       placeholder: kTransparentImage,
                       image: widget.offer.photo,
-                      fit: BoxFit.fill,
+                      fit: BoxFit.cover,
                       width: double.infinity,
                       height: 200,
                     ),
@@ -135,7 +135,7 @@ class _CouponDetailState extends State<CouponDetail> {
                                 Column(
                                   children: [
                                     Text(
-                                      'Validity',
+                                      'Type',
                                       style:
                                           _theme.textTheme.bodyText1.copyWith(
                                         fontWeight: FontWeight.bold,
@@ -144,7 +144,7 @@ class _CouponDetailState extends State<CouponDetail> {
                                     ),
                                     SizedBox(height: spacingMin),
                                     Text(
-                                      '30 Dec 2020',
+                                      'Promo',
                                       style:
                                           _theme.textTheme.bodyText1.copyWith(
                                         color: tertiaryColor,
@@ -170,21 +170,7 @@ class _CouponDetailState extends State<CouponDetail> {
                               color: tertiaryColor,
                             ),
                           ),
-                          Divider(thickness: 2),
                           SizedBox(height: spacingMin),
-                          Text(
-                            'Terms & Conditions',
-                            style: _theme.textTheme.headline3.copyWith(
-                              color: tertiaryColor,
-                            ),
-                          ),
-                          Text(
-                            widget.offer.description,
-                            style: _theme.textTheme.bodyText1.copyWith(
-                              color: tertiaryColor,
-                            ),
-                          ),
-                          SizedBox(height: spacingSmall),
                         ],
                       ),
                     ),

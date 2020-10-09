@@ -8,6 +8,7 @@ import 'package:visibility_detector/visibility_detector.dart';
 import 'package:zwm_app/Components/Merchants/partials/AcceptingItemsTab.dart';
 import 'package:zwm_app/Components/Merchants/partials/CouponTab.dart';
 import 'package:zwm_app/Components/Merchants/partials/ProductTab.dart';
+import 'package:zwm_app/Components/Merchants/partials/businessHoursDialog.dart';
 import 'package:zwm_app/Models/Good.dart';
 
 import 'package:zwm_app/Models/Merchant.dart';
@@ -39,6 +40,7 @@ class _MerchantDetailState extends State<MerchantDetail>
 
   @override
   void initState() {
+    print(widget.merchant.photo);
     _autoScrollController = AutoScrollController(
       viewportBoundaryGetter: () =>
           Rect.fromLTRB(0, 0, 0, MediaQuery.of(context).padding.bottom),
@@ -140,7 +142,7 @@ class _MerchantDetailState extends State<MerchantDetail>
       backgroundColor: accentColor,
       flexibleSpace: FlexibleSpaceBar(
         collapseMode: CollapseMode.parallax,
-        background: widget.merchant.photo != ""
+        background: widget.merchant.photo != ''
             ? FadeInImage.memoryNetwork(
                 placeholder: kTransparentImage,
                 image: widget.merchant.photo,
@@ -149,7 +151,7 @@ class _MerchantDetailState extends State<MerchantDetail>
                 height: 200,
               )
             : Image.asset(
-                'assets/images/categories/bulk.jpg',
+                'assets/images/home.jpg',
                 fit: BoxFit.cover,
                 width: double.infinity,
                 height: 200,
@@ -263,7 +265,6 @@ class _MerchantDetailState extends State<MerchantDetail>
             name: _good.categories[index - 1],
             products: product,
           ),
-          // item: item
         ),
       );
     }
@@ -315,30 +316,41 @@ class _MerchantDetailState extends State<MerchantDetail>
                                       maxLines: 2,
                                     ),
                                     SizedBox(height: spacingSmall),
-                                    Row(
-                                      children: [
-                                        Icon(
-                                          Feather.clock,
-                                          color: tertiaryColor,
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: paddingMid,
+                                    GestureDetector(
+                                      onTap: () => showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return BusinessHoursDialog(
+                                            businessHours:
+                                                widget.merchant.businessHours,
+                                          );
+                                        },
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Feather.clock,
+                                            color: tertiaryColor,
                                           ),
-                                          child: Text(
-                                            'Business Hours',
-                                            style: _theme.textTheme.caption
-                                                .copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              color: tertiaryColor,
+                                          Padding(
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: paddingMid,
+                                            ),
+                                            child: Text(
+                                              'Business Hours',
+                                              style: _theme.textTheme.caption
+                                                  .copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                color: tertiaryColor,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                        Icon(
-                                          Feather.chevron_down,
-                                          color: tertiaryColor,
-                                        ),
-                                      ],
+                                          Icon(
+                                            Feather.chevron_down,
+                                            color: tertiaryColor,
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                     SizedBox(height: spacingSmall),
                                     Row(
@@ -358,37 +370,39 @@ class _MerchantDetailState extends State<MerchantDetail>
                                           shape: CircleBorder(),
                                           constraints: BoxConstraints(),
                                         ),
-                                        Padding(
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: paddingLarge,
+                                        if (widget.merchant.contact != null)
+                                          Padding(
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: paddingLarge,
+                                            ),
+                                            child: RawMaterialButton(
+                                              onPressed: () => _launchURL(
+                                                  "tel:${widget.merchant.contact}"),
+                                              elevation: 5,
+                                              fillColor: accentColor,
+                                              child: Icon(
+                                                Feather.phone,
+                                                color: primaryColor,
+                                              ),
+                                              padding: EdgeInsets.all(15),
+                                              shape: CircleBorder(),
+                                              constraints: BoxConstraints(),
+                                            ),
                                           ),
-                                          child: RawMaterialButton(
+                                        if (widget.merchant.link != null)
+                                          RawMaterialButton(
                                             onPressed: () => _launchURL(
-                                                "tel:${widget.merchant.contact}"),
+                                                "${widget.merchant.link}"),
                                             elevation: 5,
                                             fillColor: accentColor,
                                             child: Icon(
-                                              Feather.phone,
+                                              Feather.link,
                                               color: primaryColor,
                                             ),
                                             padding: EdgeInsets.all(15),
                                             shape: CircleBorder(),
                                             constraints: BoxConstraints(),
-                                          ),
-                                        ),
-                                        RawMaterialButton(
-                                          onPressed: () => _launchURL(
-                                              "${widget.merchant.link}"),
-                                          elevation: 5,
-                                          fillColor: accentColor,
-                                          child: Icon(
-                                            Feather.link,
-                                            color: primaryColor,
-                                          ),
-                                          padding: EdgeInsets.all(15),
-                                          shape: CircleBorder(),
-                                          constraints: BoxConstraints(),
-                                        )
+                                          )
                                       ],
                                     )
                                   ],
@@ -397,7 +411,7 @@ class _MerchantDetailState extends State<MerchantDetail>
                               Expanded(
                                 flex: 2,
                                 child: ClipOval(
-                                  child: widget.merchant.photo != ""
+                                  child: widget.merchant.photo != ''
                                       ? Image.network(
                                           widget.merchant.photo,
                                           fit: BoxFit.fill,
@@ -405,7 +419,7 @@ class _MerchantDetailState extends State<MerchantDetail>
                                           height: 70,
                                         )
                                       : Image.asset(
-                                          'assets/images/categories/bulk.jpg',
+                                          'assets/images/home.jpg',
                                           fit: BoxFit.fill,
                                           width: 70,
                                           height: 70,
