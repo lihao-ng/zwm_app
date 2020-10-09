@@ -19,7 +19,7 @@ List<Category> categories = [
   Category(
     title: "Bookworm's Paradise",
     value: "Bookworm's Paradise",
-    icon: "assets/images/categories_icons/bulk.png",
+    icon: "assets/images/categories_icons/bookstore.png",
     image: "assets/images/categories/bookstore.jpg",
   ),
   Category(

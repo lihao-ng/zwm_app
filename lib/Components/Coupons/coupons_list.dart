@@ -51,6 +51,8 @@ class _CouponsListState extends State<CouponsList> {
       type: 'Promo',
       page: _page,
       onSuccess: (List<Offer> offers, page) {
+        if (!mounted) return;
+
         setState(() {
           _offersLoading = false;
         });
@@ -80,6 +82,8 @@ class _CouponsListState extends State<CouponsList> {
         }
       },
       onError: (response) {
+        if (!mounted) return;
+
         setState(() {
           _offersLoading = false;
         });

@@ -40,7 +40,6 @@ class _MerchantDetailState extends State<MerchantDetail>
 
   @override
   void initState() {
-    print(widget.merchant.photo);
     _autoScrollController = AutoScrollController(
       viewportBoundaryGetter: () =>
           Rect.fromLTRB(0, 0, 0, MediaQuery.of(context).padding.bottom),
@@ -359,7 +358,8 @@ class _MerchantDetailState extends State<MerchantDetail>
                                       children: [
                                         RawMaterialButton(
                                           onPressed: () => _launchURL(
-                                              "https://www.google.com/maps?q=loc:${widget.merchant.lat},${widget.merchant.lng}"),
+                                              Uri.encodeFull(
+                                                  "https://www.google.com/maps?q=loc:${widget.merchant.lat},${widget.merchant.lng}")),
                                           elevation: 5,
                                           fillColor: accentColor,
                                           child: Icon(
@@ -377,7 +377,8 @@ class _MerchantDetailState extends State<MerchantDetail>
                                             ),
                                             child: RawMaterialButton(
                                               onPressed: () => _launchURL(
-                                                  "tel:${widget.merchant.contact}"),
+                                                  Uri.encodeFull(
+                                                      "tel:${widget.merchant.contact}")),
                                               elevation: 5,
                                               fillColor: accentColor,
                                               child: Icon(

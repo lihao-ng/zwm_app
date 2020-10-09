@@ -50,6 +50,8 @@ class _MerchantsListState extends State<MerchantsList> {
       categories: [widget.category.value],
       page: _page,
       onSuccess: (List<Merchant> merchants, page) {
+        if (!mounted) return;
+
         setState(() {
           _merchantsLoading = false;
         });
