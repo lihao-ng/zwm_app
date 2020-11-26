@@ -35,7 +35,7 @@ class _MerchantDetailState extends State<MerchantDetail>
   bool isExpaned = true;
   bool get _isAppBarExpanded {
     return _autoScrollController.hasClients &&
-        _autoScrollController.offset > (160 - kToolbarHeight);
+        _autoScrollController.offset > (150 - kToolbarHeight);
   }
 
   @override
@@ -50,13 +50,11 @@ class _MerchantDetailState extends State<MerchantDetail>
                 ? setState(
                     () {
                       isExpaned = false;
-                      print('setState is called');
                     },
                   )
                 : {}
             : isExpaned != true
                 ? setState(() {
-                    print('setState is called');
                     isExpaned = true;
                   })
                 : {},
@@ -230,28 +228,32 @@ class _MerchantDetailState extends State<MerchantDetail>
     List<Widget> widgets = [];
     var index = 0;
 
-    for (var offer in _good.offers) {
-      index += 1;
+    if (_good.categories.contains('Rewards')) {
+      widgets.add(
+        _wrapScrollTag(
+          index: index + 1,
+          child: CouponTab(
+            name: 'Rewards',
+            coupons: _good.offers[index],
+          ),
+        ),
+      );
 
-      index == 1 && _good.categories[0] == 'Rewards'
-          ? widgets.add(
-              _wrapScrollTag(
-                index: index,
-                child: CouponTab(
-                  name: 'Rewards',
-                  coupons: offer,
-                ),
-              ),
-            )
-          : widgets.add(
-              _wrapScrollTag(
-                index: index,
-                child: AcceptingItemsTab(
-                  name: 'Accepting Items',
-                  // item: item
-                ),
-              ),
-            );
+      index += 1;
+    }
+
+    if (_good.categories.contains('Accepting Items')) {
+      widgets.add(
+        _wrapScrollTag(
+          index: index + 1,
+          child: AcceptingItemsTab(
+            name: 'Accepting Items',
+            items: _good.offers[index],
+          ),
+        ),
+      );
+
+      index += 1;
     }
 
     for (var product in _good.products) {

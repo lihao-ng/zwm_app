@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:transparent_image/transparent_image.dart';
 import 'package:zwm_app/Models/Offer.dart';
 import 'package:zwm_app/constants.dart';
 
 class AcceptingItemsTab extends StatefulWidget {
   final String name;
+  final List<Offer> items;
 
-  const AcceptingItemsTab({@required this.name});
+  const AcceptingItemsTab({@required this.name, @required this.items});
 
   AcceptingItemsTabState createState() => AcceptingItemsTabState();
 }
@@ -15,7 +17,8 @@ class AcceptingItemsTabState extends State<AcceptingItemsTab> {
   Widget build(BuildContext context) {
     final _theme = Theme.of(context);
 
-    return Padding(
+    return Container(
+      color: accentColor,
       padding: EdgeInsets.all(paddingMid),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,9 +36,13 @@ class AcceptingItemsTabState extends State<AcceptingItemsTab> {
             physics: NeverScrollableScrollPhysics(),
             childAspectRatio: 2.1 / 2.9,
             crossAxisSpacing: paddingLarge,
-            children: offers.map<Widget>((Offer offer) {
+            children: widget.items.map<Widget>((Offer offer) {
               return GestureDetector(
-                // onTap: press,
+                onTap: () => Navigator.pushNamed(
+                  context,
+                  '/coupon-detail',
+                  arguments: offer,
+                ),
                 child: Container(
                   width: double.infinity,
                   child: Column(
@@ -43,8 +50,9 @@ class AcceptingItemsTabState extends State<AcceptingItemsTab> {
                     children: <Widget>[
                       ClipRRect(
                         borderRadius: BorderRadius.circular(5),
-                        child: Image.asset(
-                          offer.photo,
+                        child: FadeInImage.memoryNetwork(
+                          placeholder: kTransparentImage,
+                          image: offer.photo,
                           fit: BoxFit.cover,
                           width: double.infinity,
                           height: 140,
