@@ -30,10 +30,6 @@ class _CouponDetailState extends State<CouponDetail> {
     PromocodeServices().redeem(
       offerId: widget.offer.id,
       onSuccess: (Promocode promocode) {
-        if (offers.length == 0) {
-          return;
-        }
-
         Navigator.of(context).pop();
         Keys.navKey.currentState
             .pushNamed('/promocode-detail', arguments: promocode);
