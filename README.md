@@ -1,6 +1,6 @@
 # Zero Waste Mobile Application
 
-### A Dashboard for Zero Waste Merchants for updating their shop's information and awarding points to a customer for purchasing/donating products from/to their shop. (Scroll to the bottom to obtain the dashboard's credential)
+### A Mobile Application for Zero Waste Customers for them to manage their account, find nearby zero waste shops, redeem rewards and scanning objects to determine if it is recyclable
 
 - **Merchant Dashboard([View here](https://github.com/lihao-ng/zwm#readme))** - For merchants to handle their shop information, product listing & awarding points to customers
 - **Customer Application** - For customers to access, view nearby shops, use points received and scan objects to determine if it is recyclable
