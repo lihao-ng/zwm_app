@@ -1,4 +1,4 @@
-# Zero Waste Dashboard
+# Zero Waste Mobile Application
 
 ### A Dashboard for Zero Waste Merchants for updating their shop's information and awarding points to a customer for purchasing/donating products from/to their shop. (Scroll to the bottom to obtain the dashboard's credential)
 
